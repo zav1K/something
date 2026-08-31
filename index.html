@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Granum — elemental sand physics</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="toolbar">
+      <div class="brand">GRANUM</div>
+
+      <div class="materials" id="materials">
+        <button class="mat-btn active" data-mat="SAND">Sand</button>
+        <button class="mat-btn" data-mat="WATER">Water</button>
+        <button class="mat-btn" data-mat="STONE">Stone</button>
+        <button class="mat-btn" data-mat="WOOD">Wood</button>
+        <button class="mat-btn" data-mat="FIRE">Fire</button>
+        <button class="mat-btn" data-mat="OIL">Oil</button>
+        <button class="mat-btn" data-mat="EMPTY">Erase</button>
+      </div>
+
+      <div class="controls">
+        <label class="brush-label">
+          Brush
+          <input type="range" id="brush-size" min="1" max="18" value="5">
+        </label>
+        <button id="pause-btn" title="Pause / resume">Pause</button>
+        <button id="clear-btn" title="Clear canvas">Clear</button>
+      </div>
+    </header>
+
+    <main class="stage">
+      <canvas id="sim-canvas"></canvas>
+      <div class="hint" id="hint">click &amp; drag to place matter</div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
