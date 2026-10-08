@@ -117,6 +117,24 @@ select {
 
 .btn-primary { background: var(--accent); color: var(--accent-ink); }
 .btn-secondary { background: #fff; border-color: var(--border); color: var(--text); }
+.btn-ghost { background: transparent; border-color: var(--border); color: var(--muted); }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  background: #2c2a22;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+
+.toast.show { opacity: 1; }
 
 .preview {
   padding: 0;

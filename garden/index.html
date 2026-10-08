@@ -36,6 +36,16 @@
         </label>
 
         <label class="field">
+          <span class="field-label">Season</span>
+          <select id="season-input">
+            <option value="spring">Spring</option>
+            <option value="summer" selected>Summer</option>
+            <option value="autumn">Autumn</option>
+            <option value="winter">Winter</option>
+          </select>
+        </label>
+
+        <label class="field">
           <span class="field-label">Growth stage <span id="age-value">100</span>%</span>
           <input type="range" id="age-input" min="0" max="100" step="1" value="100">
         </label>
@@ -69,6 +79,7 @@
 
         <button id="grow-btn" class="btn btn-primary">🌱 Grow</button>
         <button id="download-btn" class="btn btn-secondary">⬇ Download PNG</button>
+        <button id="share-btn" class="btn btn-ghost">🔗 Copy link to this plant</button>
       </section>
 
       <section class="panel preview">
@@ -76,6 +87,8 @@
       </section>
     </main>
   </div>
+
+  <div id="toast" class="toast"></div>
 
   <script src="script.js"></script>
 </body>

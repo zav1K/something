@@ -1,5 +1,7 @@
 // Procedural Garden — L-system tree/plant generator, rendered in 3D,
-// potted, and grown through real developmental stages.
+// potted, grown through real developmental stages, and now alive year
+// round: it sways in a light breeze, turns with the seasons, and sheds
+// leaves in autumn.
 //
 // Growth: every segment records how far along its branch's path (in
 // cumulative length from the root) it starts and ends. "Age" is just
@@ -13,11 +15,18 @@
 // densely leaves cluster near the tips, how much branches droop under
 // their own weight (weeping willow), and whether the trunk starts on a
 // trained lean (bonsai).
+//
+// Reproducibility: structural randomness (turn jitter, branch spread)
+// is drawn from a seeded PRNG, not Math.random. Grow rolls a fresh
+// seed; dragging a slider keeps the current one, so nudging an angle
+// adjusts THIS tree instead of reshuffling into an unrelated one. The
+// seed travels in the share link so a specific specimen is a URL, not
+// a screenshot.
 
 const PRESETS = {
   // --- abstract (original presets, unchanged look) ---
   fractalPlant: {
-    group: 'Abstract', label: 'Fractal Plant',
+    group: 'Abstract', label: 'Fractal Plant', deciduous: true,
     axiom: 'X', rules: { X: 'F+[[X]-X]-F[-FX]+X', F: 'FF' },
     angle: 25, jitter: 4, iterations: 5, startLen: 7, lengthDecay: 0.97,
     trunkColor: [107, 66, 38], leafColor: [76, 175, 109],
@@ -25,7 +34,7 @@ const PRESETS = {
     leafDepthFrac: 0.3, gravityBias: 0, leanDeg: 0,
   },
   binaryTree: {
-    group: 'Abstract', label: 'Young Sapling',
+    group: 'Abstract', label: 'Young Sapling', deciduous: true,
     axiom: 'F', rules: { F: 'F[+F]F[-F]F' },
     angle: 30, jitter: 4, iterations: 4, startLen: 9, lengthDecay: 0.78,
     trunkColor: [107, 66, 38], leafColor: [76, 175, 109],
@@ -33,7 +42,7 @@ const PRESETS = {
     leafDepthFrac: 0.3, gravityBias: 0, leanDeg: 0,
   },
   bushyShrub: {
-    group: 'Abstract', label: 'Bushy Shrub',
+    group: 'Abstract', label: 'Bushy Shrub', deciduous: true,
     axiom: 'F', rules: { F: 'FF-[-F+F+F]+[+F-F-F]' },
     angle: 22, jitter: 4, iterations: 4, startLen: 11, lengthDecay: 0.88,
     trunkColor: [107, 66, 38], leafColor: [76, 175, 109],
@@ -41,7 +50,7 @@ const PRESETS = {
     leafDepthFrac: 0.3, gravityBias: 0, leanDeg: 0,
   },
   sparseTree: {
-    group: 'Abstract', label: 'Sparse Tree',
+    group: 'Abstract', label: 'Sparse Tree', deciduous: true,
     axiom: 'F', rules: { F: 'F[+F]F[-F][F]' },
     angle: 20, jitter: 4, iterations: 5, startLen: 8, lengthDecay: 0.86,
     trunkColor: [107, 66, 38], leafColor: [76, 175, 109],
@@ -52,7 +61,7 @@ const PRESETS = {
   // --- real species (reuse the two grammars that read lushest, and tell
   // species apart through color/angle/taper/gravity/lean instead) ---
   oak: {
-    group: 'Real species', label: 'Oak',
+    group: 'Real species', label: 'Oak', deciduous: true,
     axiom: 'F', rules: { F: 'FF-[-F+F+F]+[+F-F-F]' },
     angle: 26, jitter: 4, iterations: 4, startLen: 9, lengthDecay: 0.85,
     trunkColor: [92, 70, 48], leafColor: [70, 128, 58],
@@ -60,7 +69,7 @@ const PRESETS = {
     leafDepthFrac: 0.55, gravityBias: 0, leanDeg: 0,
   },
   willow: {
-    group: 'Real species', label: 'Weeping Willow',
+    group: 'Real species', label: 'Weeping Willow', deciduous: true,
     axiom: 'F', rules: { F: 'FF-[-F+F+F]+[+F-F-F]' },
     angle: 30, jitter: 5, iterations: 4, startLen: 9, lengthDecay: 0.76,
     trunkColor: [80, 64, 46], leafColor: [158, 185, 104],
@@ -68,7 +77,7 @@ const PRESETS = {
     leafDepthFrac: 0.6, gravityBias: 0.16, leanDeg: 0,
   },
   pine: {
-    group: 'Real species', label: 'Pine',
+    group: 'Real species', label: 'Pine', deciduous: false,
     axiom: 'F', rules: { F: 'F[+F]F[-F][F]' },
     angle: 16, jitter: 2, iterations: 5, startLen: 7, lengthDecay: 0.84,
     trunkColor: [70, 52, 38], leafColor: [42, 86, 54],
@@ -76,7 +85,7 @@ const PRESETS = {
     leafDepthFrac: 0.42, gravityBias: 0, leanDeg: 0,
   },
   sakura: {
-    group: 'Real species', label: 'Sakura',
+    group: 'Real species', label: 'Sakura', deciduous: true,
     axiom: 'F', rules: { F: 'FF-[-F+F+F]+[+F-F-F]' },
     angle: 24, jitter: 4, iterations: 4, startLen: 9, lengthDecay: 0.87,
     trunkColor: [94, 72, 60], leafColor: [238, 176, 200],
@@ -84,7 +93,7 @@ const PRESETS = {
     leafDepthFrac: 0.65, gravityBias: 0, leanDeg: 0,
   },
   bonsai: {
-    group: 'Real species', label: 'Bonsai Juniper',
+    group: 'Real species', label: 'Bonsai Juniper', deciduous: false,
     axiom: 'F', rules: { F: 'FF-[-F+F+F]+[+F-F-F]' },
     angle: 32, jitter: 12, iterations: 3, startLen: 10, lengthDecay: 0.68,
     trunkColor: [100, 76, 54], leafColor: [64, 120, 68],
@@ -99,12 +108,17 @@ const SKY_FADE_COLOR = [223, 240, 243];
 const GOLDEN_ANGLE = 137.5 * (Math.PI / 180);
 const BRANCH_ROLL_JITTER = 15 * (Math.PI / 180);
 const AUTO_ROTATE_SPEED = 0.0022;
+const MAX_LEAF_PARTICLES = 40;
+const LEAF_PARTICLE_SPAWN_MS = 220;
+const AUTUMN_COLOR = [206, 110, 42];
+const SPRING_COLOR = [205, 230, 150];
 
 const canvas = document.getElementById('tree-canvas');
 const ctx = canvas.getContext('2d');
 
 const el = {
   preset: document.getElementById('preset-input'),
+  season: document.getElementById('season-input'),
   age: document.getElementById('age-input'),
   ageValue: document.getElementById('age-value'),
   iter: document.getElementById('iter-input'),
@@ -118,6 +132,8 @@ const el = {
   leaves: document.getElementById('leaves-input'),
   growBtn: document.getElementById('grow-btn'),
   downloadBtn: document.getElementById('download-btn'),
+  shareBtn: document.getElementById('share-btn'),
+  toast: document.getElementById('toast'),
 };
 
 let dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -128,6 +144,7 @@ let currentTrunkColor = [107, 66, 38];
 let currentLeafColor = [76, 175, 109];
 let currentLeafDots = [[233, 163, 201]];
 let currentLeafDepthFrac = 0.3;
+let currentDeciduous = true;
 let maxDepthSeen = 1;
 let sceneView = { center: [0, 0, 0], radius: 1, maxPathLen: 1 };
 
@@ -140,6 +157,28 @@ let growAge = 1;
 let growAnimating = false;
 let growStart = 0;
 
+let leafParticles = [];
+let lastParticleSpawnTs = 0;
+let lastFrameTs = 0;
+let toastTimer = null;
+
+// --- seeded randomness ---------------------------------------------------
+// Structural shape comes from this PRNG, not Math.random, so a seed fully
+// determines a tree's geometry: same seed + same sliders = same plant.
+
+function mulberry32(seed) {
+  let s = seed | 0;
+  return function () {
+    s = (s + 0x6D2B79F5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+let currentSeed = (Math.random() * 2 ** 31) | 0;
+let rng = mulberry32(currentSeed);
+
 function resizeCanvas() {
   const rect = canvas.parentElement.getBoundingClientRect();
   cssWidth = rect.width;
@@ -149,6 +188,13 @@ function resizeCanvas() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 window.addEventListener('resize', resizeCanvas);
+
+function showToast(msg) {
+  el.toast.textContent = msg;
+  el.toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.toast.classList.remove('show'), 2400);
+}
 
 // --- L-system grammar (string rewriting) --------------------------------
 
@@ -228,13 +274,13 @@ function interpret3D(symbols, opts) {
       pos = next;
     } else if (ch === '+' || ch === '-') {
       const sign = ch === '+' ? 1 : -1;
-      const a = sign * (angleRad + (Math.random() * 2 - 1) * jitterRad);
+      const a = sign * (angleRad + (rng() * 2 - 1) * jitterRad);
       F = rotateAroundAxis(F, U, a);
       R = rotateAroundAxis(R, U, a);
     } else if (ch === '[') {
       stack.push({ pos, F, U, R, len, depth, pathLen });
       branchCount++;
-      const roll = branchCount * GOLDEN_ANGLE + (Math.random() * 2 - 1) * BRANCH_ROLL_JITTER;
+      const roll = branchCount * GOLDEN_ANGLE + (rng() * 2 - 1) * BRANCH_ROLL_JITTER;
       U = rotateAroundAxis(U, F, roll);
       R = rotateAroundAxis(R, F, roll);
       depth++;
@@ -309,6 +355,59 @@ function computeScene(treeSegments, potQuads) {
   sceneView = { center, radius, maxPathLen: Math.max(1, maxPath) };
 }
 
+// --- seasons --------------------------------------------------------
+
+function seasonalLeafColor(season) {
+  if (!currentDeciduous) return currentLeafColor;
+  if (season === 'winter') return null; // bare
+  if (season === 'spring') return lerpColor(currentLeafColor, SPRING_COLOR, 0.4);
+  if (season === 'autumn') return lerpColor(currentLeafColor, AUTUMN_COLOR, 0.7);
+  return currentLeafColor;
+}
+
+function seasonalLeafDots(season) {
+  const base = seasonalLeafColor(season);
+  if (!base) return null;
+  if (season === 'summer' || !currentDeciduous) return currentLeafDots;
+  return currentLeafDots.map((c) => (
+    season === 'autumn' ? lerpColor(c, AUTUMN_COLOR, 0.7)
+      : season === 'spring' ? lerpColor(c, SPRING_COLOR, 0.4)
+        : c
+  ));
+}
+
+// --- falling leaf particles (autumn, deciduous only) ---------------------
+
+function updateParticles(ts, ageDist, leafThreshold) {
+  const dt = Math.min(0.05, (ts - (lastFrameTs || ts)) / 1000);
+  lastFrameTs = ts;
+
+  const season = el.season.value;
+  const sheddable = season === 'autumn' && currentDeciduous && el.leaves.checked;
+
+  if (sheddable && leafParticles.length < MAX_LEAF_PARTICLES && ts - lastParticleSpawnTs > LEAF_PARTICLE_SPAWN_MS) {
+    lastParticleSpawnTs = ts;
+    const candidates = currentSegments.filter((s) => s.bornEnd <= ageDist && s.depth >= leafThreshold);
+    if (candidates.length) {
+      const s = candidates[(Math.random() * candidates.length) | 0];
+      const dots = seasonalLeafDots('autumn') || currentLeafDots;
+      leafParticles.push({
+        x: s.x2, y: s.y2, z: s.z2,
+        vy: sceneView.radius * (0.22 + Math.random() * 0.14),
+        swayPhase: Math.random() * Math.PI * 2,
+        swayFreq: 0.8 + Math.random() * 0.6,
+        color: dots[(Math.random() * dots.length) | 0],
+      });
+    }
+  }
+
+  const floorY = -sceneView.radius * 0.25;
+  leafParticles = leafParticles.filter((p) => {
+    p.y -= p.vy * dt;
+    return p.y > floorY;
+  });
+}
+
 // --- rendering --------------------------------------------------------
 
 function lerpColor(a, b, t) {
@@ -324,14 +423,25 @@ function drawBackground() {
   ctx.fillRect(0, 0, cssWidth, cssHeight);
 }
 
-function render() {
+function windOffset(pathLenAtPoint, tsec) {
+  const f = Math.pow(Math.min(1, pathLenAtPoint / sceneView.maxPathLen), 1.6);
+  const amp = sceneView.radius * 0.05 * f;
+  const phase = pathLenAtPoint * 0.7;
+  return [
+    Math.sin(tsec * 1.3 + phase) * amp,
+    Math.cos(tsec * 1.1 + phase * 1.3) * amp * 0.6,
+  ];
+}
+
+function render(ts, ageDist, leafThreshold) {
   drawBackground();
-  const { center, radius, maxPathLen } = sceneView;
+  const { center, radius } = sceneView;
   const cosAz = Math.cos(azimuth), sinAz = Math.sin(azimuth);
   const cosEl = Math.cos(elevation), sinEl = Math.sin(elevation);
   const D = radius * 2.6;
   const pxScale = ((Math.min(cssWidth, cssHeight) * 0.4) / radius) * zoom;
   const cxpx = cssWidth / 2, cypx = cssHeight * 0.58;
+  const tsec = ts / 1000;
 
   function project(x, y, z) {
     const px = x - center[0], py = y - center[1], pz = z - center[2];
@@ -343,9 +453,11 @@ function render() {
     return { sx: cxpx + x1 * pxScale * persp, sy: cypx - y2 * pxScale * persp, z2, persp };
   }
 
-  const ageDist = growAge * maxPathLen;
-  const showLeaves = el.leaves.checked;
-  const leafThreshold = maxDepthSeen * (1 - currentLeafDepthFrac);
+  const season = el.season.value;
+  const seasonLeafColor = seasonalLeafColor(season);
+  const seasonLeafDots = seasonalLeafDots(season);
+  const leavesVisible = el.leaves.checked && seasonLeafColor !== null;
+
   const drawables = [];
   let zMin = Infinity, zMax = -Infinity;
 
@@ -353,21 +465,25 @@ function render() {
     const s = currentSegments[i];
     if (ageDist <= s.born) continue;
     let ex = s.x2, ey = s.y2, ez = s.z2, grown = true;
+    let tipPathLen = s.bornEnd;
     if (ageDist < s.bornEnd) {
       const frac = (ageDist - s.born) / Math.max(1e-6, s.bornEnd - s.born);
       ex = s.x1 + (s.x2 - s.x1) * frac;
       ey = s.y1 + (s.y2 - s.y1) * frac;
       ez = s.z1 + (s.z2 - s.z1) * frac;
       grown = false;
+      tipPathLen = ageDist;
     }
-    const p1 = project(s.x1, s.y1, s.z1);
-    const p2 = project(ex, ey, ez);
+    const [swx1, swz1] = windOffset(s.born, tsec);
+    const [swx2, swz2] = windOffset(tipPathLen, tsec);
+    const p1 = project(s.x1 + swx1, s.y1, s.z1 + swz1);
+    const p2 = project(ex + swx2, ey, ez + swz2);
     const avgZ = (p1.z2 + p2.z2) / 2;
     if (avgZ < zMin) zMin = avgZ;
     if (avgZ > zMax) zMax = avgZ;
     drawables.push({
       type: 'line', p1, p2, depth: s.depth, avgZ, i,
-      leafEligible: grown && showLeaves && s.depth >= leafThreshold,
+      leafEligible: grown && leavesVisible && s.depth >= leafThreshold,
     });
   }
 
@@ -379,6 +495,14 @@ function render() {
     drawables.push({ type: 'poly', proj, color: q.color, avgZ, azMid: q.azMid });
   }
 
+  for (const p of leafParticles) {
+    const sway = Math.sin(tsec * p.swayFreq + p.swayPhase) * sceneView.radius * 0.1;
+    const proj = project(p.x + sway, p.y, p.z);
+    if (proj.z2 < zMin) zMin = proj.z2;
+    if (proj.z2 > zMax) zMax = proj.z2;
+    drawables.push({ type: 'dot', p: proj, color: p.color, avgZ: proj.z2 });
+  }
+
   drawables.sort((a, b) => a.avgZ - b.avgZ);
   const zSpan = Math.max(1e-6, zMax - zMin);
 
@@ -386,8 +510,8 @@ function render() {
   for (const d of drawables) {
     const farT = (zMax - d.avgZ) / zSpan;
     if (d.type === 'line') {
-      const t = Math.min(1, d.depth / Math.max(3, maxDepthSeen));
-      let [r, g, b] = lerpColor(currentTrunkColor, currentLeafColor, t);
+      const t = seasonLeafColor ? Math.min(1, d.depth / Math.max(3, maxDepthSeen)) : 0;
+      let [r, g, b] = lerpColor(currentTrunkColor, seasonLeafColor || currentTrunkColor, t);
       [r, g, b] = lerpColor([r, g, b], SKY_FADE_COLOR, farT * 0.5);
       ctx.strokeStyle = `rgb(${r | 0}, ${g | 0}, ${b | 0})`;
       const avgPersp = (d.p1.persp + d.p2.persp) / 2;
@@ -397,15 +521,15 @@ function render() {
       ctx.lineTo(d.p2.sx, d.p2.sy);
       ctx.stroke();
 
-      if (d.leafEligible) {
-        const colorIdx = (d.i * 2654435761) % currentLeafDots.length >>> 0;
-        const [lr, lg, lb] = currentLeafDots[colorIdx % currentLeafDots.length];
+      if (d.leafEligible && seasonLeafDots) {
+        const colorIdx = (d.i * 2654435761) % seasonLeafDots.length >>> 0;
+        const [lr, lg, lb] = seasonLeafDots[colorIdx % seasonLeafDots.length];
         ctx.fillStyle = `rgb(${lr}, ${lg}, ${lb})`;
         ctx.beginPath();
         ctx.arc(d.p2.sx, d.p2.sy, 2.2 * avgPersp, 0, Math.PI * 2);
         ctx.fill();
       }
-    } else {
+    } else if (d.type === 'poly') {
       let [r, g, b] = d.color;
       if (d.azMid !== null) {
         const facing = (Math.cos(d.azMid - azimuth) + 1) / 2;
@@ -418,6 +542,13 @@ function render() {
       ctx.moveTo(d.proj[0].sx, d.proj[0].sy);
       for (let k = 1; k < d.proj.length; k++) ctx.lineTo(d.proj[k].sx, d.proj[k].sy);
       ctx.closePath();
+      ctx.fill();
+    } else {
+      let [r, g, b] = d.color;
+      [r, g, b] = lerpColor([r, g, b], SKY_FADE_COLOR, farT * 0.4);
+      ctx.fillStyle = `rgb(${r | 0}, ${g | 0}, ${b | 0})`;
+      ctx.beginPath();
+      ctx.arc(d.p.sx, d.p.sy, 2.6 * d.p.persp, 0, Math.PI * 2);
       ctx.fill();
     }
   }
@@ -446,7 +577,9 @@ function buildTree() {
   currentLeafColor = preset.leafColor;
   currentLeafDots = preset.leafDots;
   currentLeafDepthFrac = preset.leafDepthFrac;
+  currentDeciduous = preset.deciduous;
 
+  rng = mulberry32(currentSeed);
   const opts = currentOptions();
   const symbols = expandLSystem(opts.axiom, opts.rules, opts.iterations);
   const rawSegments = interpret3D(symbols, opts);
@@ -458,6 +591,7 @@ function buildTree() {
   currentSegments = rawSegments.map((s) => ({ ...s, y1: s.y1 + pot.potHeight, y2: s.y2 + pot.potHeight }));
   currentPotQuads = pot.quads;
   computeScene(currentSegments, currentPotQuads);
+  leafParticles = [];
 }
 
 function setAgeDisplay(pct) {
@@ -472,6 +606,7 @@ function regenerateInstant() {
 }
 
 function regenerateAnimated() {
+  currentSeed = (Math.random() * 2 ** 31) | 0;
   buildTree();
   growAge = 0;
   growAnimating = true;
@@ -485,6 +620,50 @@ function applyPresetDefaults() {
   el.iter.value = preset.iterations; el.iterValue.textContent = preset.iterations;
   el.decay.value = preset.lengthDecay; el.decayValue.textContent = preset.lengthDecay.toFixed(2);
   el.jitter.value = preset.jitter; el.jitterValue.textContent = preset.jitter;
+}
+
+// --- share link -------------------------------------------------------
+
+function loadFromUrlIfPresent() {
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has('species') || !PRESETS[params.get('species')]) return false;
+  el.preset.value = params.get('species');
+  applyPresetDefaults();
+  if (params.has('iter')) el.iter.value = params.get('iter');
+  if (params.has('angle')) el.angle.value = params.get('angle');
+  if (params.has('jitter')) el.jitter.value = params.get('jitter');
+  if (params.has('decay')) el.decay.value = params.get('decay');
+  if (params.has('season') && ['spring', 'summer', 'autumn', 'winter'].includes(params.get('season'))) {
+    el.season.value = params.get('season');
+  }
+  el.iterValue.textContent = el.iter.value;
+  el.angleValue.textContent = el.angle.value;
+  el.jitterValue.textContent = el.jitter.value;
+  el.decayValue.textContent = Number(el.decay.value).toFixed(2);
+  const seedParam = Number(params.get('seed'));
+  if (Number.isFinite(seedParam) && seedParam) currentSeed = seedParam | 0;
+  return true;
+}
+
+function shareLink() {
+  const params = new URLSearchParams({
+    species: el.preset.value,
+    iter: el.iter.value,
+    angle: el.angle.value,
+    jitter: el.jitter.value,
+    decay: el.decay.value,
+    season: el.season.value,
+    seed: String(currentSeed),
+  });
+  const url = `${location.origin}${location.pathname}?${params.toString()}`;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(
+      () => showToast('Link copied — paste it anywhere'),
+      () => showToast(url),
+    );
+  } else {
+    showToast(url);
+  }
 }
 
 // --- orbit controls --------------------------------------------------
@@ -513,6 +692,8 @@ canvas.addEventListener('wheel', (e) => {
 
 el.preset.addEventListener('change', () => { applyPresetDefaults(); regenerateAnimated(); });
 el.growBtn.addEventListener('click', regenerateAnimated);
+el.shareBtn.addEventListener('click', shareLink);
+el.season.addEventListener('change', () => { leafParticles = []; });
 
 el.age.addEventListener('input', () => {
   growAnimating = false;
@@ -550,11 +731,15 @@ function mainLoop(ts) {
     setAgeDisplay(Math.round(frac * 100));
     if (frac >= 1) growAnimating = false;
   }
-  render();
+  const ageDist = growAge * sceneView.maxPathLen;
+  const leafThreshold = maxDepthSeen * (1 - currentLeafDepthFrac);
+  updateParticles(ts, ageDist, leafThreshold);
+  render(ts, ageDist, leafThreshold);
   requestAnimationFrame(mainLoop);
 }
 
 resizeCanvas();
-applyPresetDefaults();
-regenerateAnimated();
+const loadedFromUrl = loadFromUrlIfPresent();
+if (!loadedFromUrl) applyPresetDefaults();
+if (loadedFromUrl) regenerateInstant(); else regenerateAnimated();
 requestAnimationFrame(mainLoop);
