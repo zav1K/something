@@ -102,7 +102,7 @@ const PRESETS = {
   },
 };
 
-const MAX_SYMBOLS = 200000;
+const MAX_SYMBOLS = 12000;
 const GROW_DURATION_MS = 4500;
 const SKY_FADE_COLOR = [223, 240, 243];
 const GOLDEN_ANGLE = 137.5 * (Math.PI / 180);
@@ -423,19 +423,33 @@ function drawBackground() {
   ctx.fillRect(0, 0, cssWidth, cssHeight);
 }
 
-function windOffset(pathLenAtPoint, tsec) {
-  const f = Math.pow(Math.min(1, pathLenAtPoint / sceneView.maxPathLen), 1.6);
-  const amp = sceneView.radius * 0.05 * f;
-  const phase = pathLenAtPoint * 0.7;
-  return [
-    Math.sin(tsec * 1.3 + phase) * amp,
-    Math.cos(tsec * 1.1 + phase * 1.3) * amp * 0.6,
-  ];
+const FAR_BUCKETS = 8;
+
+// Per-segment render state, rebuilt (allocated) only in buildTree(). render()
+// MUTATES these objects in place every frame instead of allocating fresh
+// ones — with tens of thousands of segments, "a few new objects per segment
+// per frame" adds up to hundreds of thousands of allocations/sec, which is
+// what was actually tanking frame rate (the draw calls were a secondary
+// cost). Bucket containers below are also flat arrays, not Maps, indexed
+// directly by an integer key — cheaper than hashing per segment.
+let renderState = [];
+
+function project2(out, x, y, z, center, cosAz, sinAz, cosEl, sinEl, D, pxScale, cxpx, cypx) {
+  const px = x - center[0], py = y - center[1], pz = z - center[2];
+  const x1 = px * cosAz + pz * sinAz;
+  const z1 = -px * sinAz + pz * cosAz;
+  const y2 = py * cosEl - z1 * sinEl;
+  const z2 = py * sinEl + z1 * cosEl;
+  const persp = D / (D - z2);
+  out.sx = cxpx + x1 * pxScale * persp;
+  out.sy = cypx - y2 * pxScale * persp;
+  out.z2 = z2;
+  out.persp = persp;
 }
 
 function render(ts, ageDist, leafThreshold) {
   drawBackground();
-  const { center, radius } = sceneView;
+  const { center, radius, maxPathLen } = sceneView;
   const cosAz = Math.cos(azimuth), sinAz = Math.sin(azimuth);
   const cosEl = Math.cos(elevation), sinEl = Math.sin(elevation);
   const D = radius * 2.6;
@@ -443,29 +457,20 @@ function render(ts, ageDist, leafThreshold) {
   const cxpx = cssWidth / 2, cypx = cssHeight * 0.58;
   const tsec = ts / 1000;
 
-  function project(x, y, z) {
-    const px = x - center[0], py = y - center[1], pz = z - center[2];
-    const x1 = px * cosAz + pz * sinAz;
-    const z1 = -px * sinAz + pz * cosAz;
-    const y2 = py * cosEl - z1 * sinEl;
-    const z2 = py * sinEl + z1 * cosEl;
-    const persp = D / (D - z2);
-    return { sx: cxpx + x1 * pxScale * persp, sy: cypx - y2 * pxScale * persp, z2, persp };
-  }
-
   const season = el.season.value;
   const seasonLeafColor = seasonalLeafColor(season);
   const seasonLeafDots = seasonalLeafDots(season);
   const leavesVisible = el.leaves.checked && seasonLeafColor !== null;
 
-  const drawables = [];
   let zMin = Infinity, zMax = -Infinity;
 
   for (let i = 0; i < currentSegments.length; i++) {
     const s = currentSegments[i];
-    if (ageDist <= s.born) continue;
-    let ex = s.x2, ey = s.y2, ez = s.z2, grown = true;
-    let tipPathLen = s.bornEnd;
+    const rs = renderState[i];
+    if (ageDist <= s.born) { rs.active = false; continue; }
+    rs.active = true;
+
+    let ex = s.x2, ey = s.y2, ez = s.z2, grown = true, tipPathLen = s.bornEnd;
     if (ageDist < s.bornEnd) {
       const frac = (ageDist - s.born) / Math.max(1e-6, s.bornEnd - s.born);
       ex = s.x1 + (s.x2 - s.x1) * frac;
@@ -474,83 +479,159 @@ function render(ts, ageDist, leafThreshold) {
       grown = false;
       tipPathLen = ageDist;
     }
-    const [swx1, swz1] = windOffset(s.born, tsec);
-    const [swx2, swz2] = windOffset(tipPathLen, tsec);
-    const p1 = project(s.x1 + swx1, s.y1, s.z1 + swz1);
-    const p2 = project(ex + swx2, ey, ez + swz2);
-    const avgZ = (p1.z2 + p2.z2) / 2;
-    if (avgZ < zMin) zMin = avgZ;
-    if (avgZ > zMax) zMax = avgZ;
-    drawables.push({
-      type: 'line', p1, p2, depth: s.depth, avgZ, i,
-      leafEligible: grown && leavesVisible && s.depth >= leafThreshold,
-    });
+
+    const f1 = Math.pow(Math.min(1, s.born / maxPathLen), 1.6) * radius * 0.05;
+    const ph1 = s.born * 0.7;
+    const f2 = Math.pow(Math.min(1, tipPathLen / maxPathLen), 1.6) * radius * 0.05;
+    const ph2 = tipPathLen * 0.7;
+
+    project2(
+      rs.p1, s.x1 + Math.sin(tsec * 1.3 + ph1) * f1, s.y1, s.z1 + Math.cos(tsec * 1.1 + ph1 * 1.3) * f1 * 0.6,
+      center, cosAz, sinAz, cosEl, sinEl, D, pxScale, cxpx, cypx,
+    );
+    project2(
+      rs.p2, ex + Math.sin(tsec * 1.3 + ph2) * f2, ey, ez + Math.cos(tsec * 1.1 + ph2 * 1.3) * f2 * 0.6,
+      center, cosAz, sinAz, cosEl, sinEl, D, pxScale, cxpx, cypx,
+    );
+
+    rs.avgZ = (rs.p1.z2 + rs.p2.z2) / 2;
+    rs.leafEligible = grown && leavesVisible && s.depth >= leafThreshold;
+    if (rs.avgZ < zMin) zMin = rs.avgZ;
+    if (rs.avgZ > zMax) zMax = rs.avgZ;
   }
 
+  const otherDrawables = [];
   for (const q of currentPotQuads) {
-    const proj = q.pts.map((p) => project(p[0], p[1], p[2]));
+    const proj = q.pts.map((p) => {
+      const o = { sx: 0, sy: 0, z2: 0, persp: 1 };
+      project2(o, p[0], p[1], p[2], center, cosAz, sinAz, cosEl, sinEl, D, pxScale, cxpx, cypx);
+      return o;
+    });
     const avgZ = proj.reduce((a, p) => a + p.z2, 0) / proj.length;
     if (avgZ < zMin) zMin = avgZ;
     if (avgZ > zMax) zMax = avgZ;
-    drawables.push({ type: 'poly', proj, color: q.color, avgZ, azMid: q.azMid });
+    otherDrawables.push({ type: 'poly', proj, color: q.color, avgZ, azMid: q.azMid });
   }
-
   for (const p of leafParticles) {
-    const sway = Math.sin(tsec * p.swayFreq + p.swayPhase) * sceneView.radius * 0.1;
-    const proj = project(p.x + sway, p.y, p.z);
-    if (proj.z2 < zMin) zMin = proj.z2;
-    if (proj.z2 > zMax) zMax = proj.z2;
-    drawables.push({ type: 'dot', p: proj, color: p.color, avgZ: proj.z2 });
+    const sway = Math.sin(tsec * p.swayFreq + p.swayPhase) * radius * 0.1;
+    const o = { sx: 0, sy: 0, z2: 0, persp: 1 };
+    project2(o, p.x + sway, p.y, p.z, center, cosAz, sinAz, cosEl, sinEl, D, pxScale, cxpx, cypx);
+    if (o.z2 < zMin) zMin = o.z2;
+    if (o.z2 > zMax) zMax = o.z2;
+    otherDrawables.push({ type: 'dot', p: o, color: p.color, avgZ: o.z2 });
   }
 
-  drawables.sort((a, b) => a.avgZ - b.avgZ);
   const zSpan = Math.max(1e-6, zMax - zMin);
+  const depthLevels = maxDepthSeen + 1;
 
-  ctx.lineCap = 'round';
-  for (const d of drawables) {
-    const farT = (zMax - d.avgZ) / zSpan;
-    if (d.type === 'line') {
-      const t = seasonLeafColor ? Math.min(1, d.depth / Math.max(3, maxDepthSeen)) : 0;
+  // Flat bucket arrays: line buckets indexed by depth*FAR_BUCKETS+farBucket,
+  // leaf buckets by colorIndex*FAR_BUCKETS+farBucket. Few buckets exist
+  // (tens), so allocating the bucket objects themselves each frame is fine —
+  // only per-segment allocation was the problem.
+  const lineBuckets = new Array(depthLevels * FAR_BUCKETS);
+  const leafColorCount = seasonLeafDots ? seasonLeafDots.length : 0;
+  const leafBuckets = leafColorCount ? new Array(leafColorCount * FAR_BUCKETS) : null;
+
+  for (let i = 0; i < currentSegments.length; i++) {
+    const rs = renderState[i];
+    if (!rs.active) continue;
+    const s = currentSegments[i];
+    const fb = Math.min(FAR_BUCKETS - 1, Math.max(0, Math.floor(((zMax - rs.avgZ) / zSpan) * FAR_BUCKETS)));
+    const key = s.depth * FAR_BUCKETS + fb;
+    let bucket = lineBuckets[key];
+    if (!bucket) {
+      const t = seasonLeafColor ? Math.min(1, s.depth / Math.max(3, maxDepthSeen)) : 0;
       let [r, g, b] = lerpColor(currentTrunkColor, seasonLeafColor || currentTrunkColor, t);
-      [r, g, b] = lerpColor([r, g, b], SKY_FADE_COLOR, farT * 0.5);
-      ctx.strokeStyle = `rgb(${r | 0}, ${g | 0}, ${b | 0})`;
-      const avgPersp = (d.p1.persp + d.p2.persp) / 2;
-      ctx.lineWidth = Math.max(0.5, (maxDepthSeen - d.depth + 1) * 0.8 * avgPersp);
-      ctx.beginPath();
-      ctx.moveTo(d.p1.sx, d.p1.sy);
-      ctx.lineTo(d.p2.sx, d.p2.sy);
-      ctx.stroke();
+      [r, g, b] = lerpColor([r, g, b], SKY_FADE_COLOR, ((fb + 0.5) / FAR_BUCKETS) * 0.5);
+      bucket = {
+        idx: [],
+        color: `rgb(${r | 0}, ${g | 0}, ${b | 0})`,
+        width: Math.max(0.5, (maxDepthSeen - s.depth + 1) * 0.8),
+        farBucket: fb,
+      };
+      lineBuckets[key] = bucket;
+    }
+    bucket.idx.push(i);
 
-      if (d.leafEligible && seasonLeafDots) {
-        const colorIdx = (d.i * 2654435761) % seasonLeafDots.length >>> 0;
-        const [lr, lg, lb] = seasonLeafDots[colorIdx % seasonLeafDots.length];
-        ctx.fillStyle = `rgb(${lr}, ${lg}, ${lb})`;
-        ctx.beginPath();
-        ctx.arc(d.p2.sx, d.p2.sy, 2.2 * avgPersp, 0, Math.PI * 2);
-        ctx.fill();
+    if (rs.leafEligible && leafBuckets) {
+      const colorIdx = (i * 2654435761) % leafColorCount >>> 0;
+      const leafKey = colorIdx * FAR_BUCKETS + fb;
+      let lb = leafBuckets[leafKey];
+      if (!lb) {
+        let [lr, lg, lbC] = seasonLeafDots[colorIdx % leafColorCount];
+        [lr, lg, lbC] = lerpColor([lr, lg, lbC], SKY_FADE_COLOR, ((fb + 0.5) / FAR_BUCKETS) * 0.4);
+        lb = { idx: [], color: `rgb(${lr | 0}, ${lg | 0}, ${lbC | 0})`, farBucket: fb };
+        leafBuckets[leafKey] = lb;
       }
-    } else if (d.type === 'poly') {
-      let [r, g, b] = d.color;
-      if (d.azMid !== null) {
-        const facing = (Math.cos(d.azMid - azimuth) + 1) / 2;
-        const shade = 0.62 + 0.38 * facing;
-        r *= shade; g *= shade; b *= shade;
+      lb.idx.push(i);
+    }
+  }
+
+  otherDrawables.sort((a, b) => a.avgZ - b.avgZ);
+  ctx.lineCap = 'round';
+
+  const midZ = zMin + zSpan * 0.5;
+  for (const d of otherDrawables) {
+    if (d.avgZ > midZ) continue;
+    drawOther(d, zMax, zSpan);
+  }
+
+  const lineList = lineBuckets.filter(Boolean).sort((a, b) => b.farBucket - a.farBucket);
+  for (const bucket of lineList) {
+    ctx.strokeStyle = bucket.color;
+    ctx.lineWidth = bucket.width;
+    ctx.beginPath();
+    for (const i of bucket.idx) {
+      const rs = renderState[i];
+      ctx.moveTo(rs.p1.sx, rs.p1.sy);
+      ctx.lineTo(rs.p2.sx, rs.p2.sy);
+    }
+    ctx.stroke();
+  }
+
+  if (leafBuckets) {
+    const leafList = leafBuckets.filter(Boolean).sort((a, b) => b.farBucket - a.farBucket);
+    for (const bucket of leafList) {
+      ctx.fillStyle = bucket.color;
+      ctx.beginPath();
+      for (const i of bucket.idx) {
+        const rs = renderState[i];
+        ctx.moveTo(rs.p2.sx + 2.2, rs.p2.sy);
+        ctx.arc(rs.p2.sx, rs.p2.sy, 2.2, 0, Math.PI * 2);
       }
-      [r, g, b] = lerpColor([r, g, b], SKY_FADE_COLOR, farT * 0.35);
-      ctx.fillStyle = `rgb(${r | 0}, ${g | 0}, ${b | 0})`;
-      ctx.beginPath();
-      ctx.moveTo(d.proj[0].sx, d.proj[0].sy);
-      for (let k = 1; k < d.proj.length; k++) ctx.lineTo(d.proj[k].sx, d.proj[k].sy);
-      ctx.closePath();
-      ctx.fill();
-    } else {
-      let [r, g, b] = d.color;
-      [r, g, b] = lerpColor([r, g, b], SKY_FADE_COLOR, farT * 0.4);
-      ctx.fillStyle = `rgb(${r | 0}, ${g | 0}, ${b | 0})`;
-      ctx.beginPath();
-      ctx.arc(d.p.sx, d.p.sy, 2.6 * d.p.persp, 0, Math.PI * 2);
       ctx.fill();
     }
+  }
+
+  for (const d of otherDrawables) {
+    if (d.avgZ <= midZ) continue;
+    drawOther(d, zMax, zSpan);
+  }
+}
+
+function drawOther(d, zMax, zSpan) {
+  const farT = (zMax - d.avgZ) / zSpan;
+  if (d.type === 'poly') {
+    let [r, g, b] = d.color;
+    if (d.azMid !== null) {
+      const facing = (Math.cos(d.azMid - azimuth) + 1) / 2;
+      const shade = 0.62 + 0.38 * facing;
+      r *= shade; g *= shade; b *= shade;
+    }
+    [r, g, b] = lerpColor([r, g, b], SKY_FADE_COLOR, farT * 0.35);
+    ctx.fillStyle = `rgb(${r | 0}, ${g | 0}, ${b | 0})`;
+    ctx.beginPath();
+    ctx.moveTo(d.proj[0].sx, d.proj[0].sy);
+    for (let k = 1; k < d.proj.length; k++) ctx.lineTo(d.proj[k].sx, d.proj[k].sy);
+    ctx.closePath();
+    ctx.fill();
+  } else {
+    let [r, g, b] = d.color;
+    [r, g, b] = lerpColor([r, g, b], SKY_FADE_COLOR, farT * 0.4);
+    ctx.fillStyle = `rgb(${r | 0}, ${g | 0}, ${b | 0})`;
+    ctx.beginPath();
+    ctx.arc(d.p.sx, d.p.sy, 2.6 * d.p.persp, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
 
@@ -592,6 +673,17 @@ function buildTree() {
   currentPotQuads = pot.quads;
   computeScene(currentSegments, currentPotQuads);
   leafParticles = [];
+
+  renderState = new Array(currentSegments.length);
+  for (let i = 0; i < renderState.length; i++) {
+    renderState[i] = {
+      p1: { sx: 0, sy: 0, z2: 0, persp: 1 },
+      p2: { sx: 0, sy: 0, z2: 0, persp: 1 },
+      avgZ: 0,
+      leafEligible: false,
+      active: false,
+    };
+  }
 }
 
 function setAgeDisplay(pct) {
@@ -601,8 +693,12 @@ function setAgeDisplay(pct) {
 
 function regenerateInstant() {
   buildTree();
-  growAge = Number(el.age.value) / 100;
-  growAnimating = false;
+  // If a grow animation is already running, let it keep playing on the
+  // rebuilt structure instead of freezing it at whatever age happened to
+  // be showing the instant the slider was touched.
+  if (!growAnimating) {
+    growAge = Number(el.age.value) / 100;
+  }
 }
 
 function regenerateAnimated() {
@@ -701,10 +797,17 @@ el.age.addEventListener('input', () => {
   el.ageValue.textContent = el.age.value;
 });
 
-el.iter.addEventListener('input', () => { el.iterValue.textContent = el.iter.value; regenerateInstant(); });
-el.angle.addEventListener('input', () => { el.angleValue.textContent = el.angle.value; regenerateInstant(); });
-el.jitter.addEventListener('input', () => { el.jitterValue.textContent = el.jitter.value; regenerateInstant(); });
-el.decay.addEventListener('input', () => { el.decayValue.textContent = Number(el.decay.value).toFixed(2); regenerateInstant(); });
+let pendingRegen = false;
+function scheduleRegenerateInstant() {
+  if (pendingRegen) return;
+  pendingRegen = true;
+  requestAnimationFrame(() => { pendingRegen = false; regenerateInstant(); });
+}
+
+el.iter.addEventListener('input', () => { el.iterValue.textContent = el.iter.value; scheduleRegenerateInstant(); });
+el.angle.addEventListener('input', () => { el.angleValue.textContent = el.angle.value; scheduleRegenerateInstant(); });
+el.jitter.addEventListener('input', () => { el.jitterValue.textContent = el.jitter.value; scheduleRegenerateInstant(); });
+el.decay.addEventListener('input', () => { el.decayValue.textContent = Number(el.decay.value).toFixed(2); scheduleRegenerateInstant(); });
 el.leaves.addEventListener('change', () => {});
 
 el.downloadBtn.addEventListener('click', () => {
