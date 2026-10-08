@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procedural Garden — L-system tree generator</title>
+<meta name="description" content="Grow unique procedural trees and plants from L-system grammars.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">🌿</span> Procedural Garden</div>
+      <div class="hint">drag the sliders, then hit Grow</div>
+    </header>
+
+    <main class="layout">
+      <section class="panel controls">
+        <label class="field">
+          <span class="field-label">Species</span>
+          <select id="preset-input">
+            <option value="fractalPlant">Fractal Plant</option>
+            <option value="binaryTree">Young Sapling</option>
+            <option value="bushyShrub" selected>Bushy Shrub</option>
+            <option value="sparseTree">Sparse Tree</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="field-label">Iterations <span id="iter-value">4</span></span>
+          <input type="range" id="iter-input" min="1" max="6" step="1" value="4">
+        </label>
+
+        <label class="field">
+          <span class="field-label">Branch angle <span id="angle-value">22</span>°</span>
+          <input type="range" id="angle-input" min="5" max="45" step="1" value="22">
+        </label>
+
+        <label class="field">
+          <span class="field-label">Wildness (jitter) <span id="jitter-value">4</span>°</span>
+          <input type="range" id="jitter-input" min="0" max="15" step="1" value="4">
+        </label>
+
+        <label class="field">
+          <span class="field-label">Branch taper <span id="decay-value">0.90</span></span>
+          <input type="range" id="decay-input" min="0.7" max="0.98" step="0.01" value="0.90">
+        </label>
+
+        <label class="field field-inline">
+          <input type="checkbox" id="leaves-input" checked>
+          <span class="field-label">Leaves</span>
+        </label>
+
+        <div class="divider"></div>
+
+        <button id="grow-btn" class="btn btn-primary">🌱 Grow</button>
+        <button id="download-btn" class="btn btn-secondary">⬇ Download PNG</button>
+      </section>
+
+      <section class="panel preview">
+        <canvas id="tree-canvas"></canvas>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
