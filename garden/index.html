@@ -19,16 +19,30 @@
         <label class="field">
           <span class="field-label">Species</span>
           <select id="preset-input">
-            <option value="fractalPlant">Fractal Plant</option>
-            <option value="binaryTree">Young Sapling</option>
-            <option value="bushyShrub" selected>Bushy Shrub</option>
-            <option value="sparseTree">Sparse Tree</option>
+            <optgroup label="Real species">
+              <option value="oak" selected>Oak</option>
+              <option value="willow">Weeping Willow</option>
+              <option value="pine">Pine</option>
+              <option value="sakura">Sakura</option>
+              <option value="bonsai">Bonsai Juniper</option>
+            </optgroup>
+            <optgroup label="Abstract">
+              <option value="fractalPlant">Fractal Plant</option>
+              <option value="binaryTree">Young Sapling</option>
+              <option value="bushyShrub">Bushy Shrub</option>
+              <option value="sparseTree">Sparse Tree</option>
+            </optgroup>
           </select>
         </label>
 
         <label class="field">
-          <span class="field-label">Iterations <span id="iter-value">4</span></span>
-          <input type="range" id="iter-input" min="1" max="6" step="1" value="4">
+          <span class="field-label">Growth stage <span id="age-value">100</span>%</span>
+          <input type="range" id="age-input" min="0" max="100" step="1" value="100">
+        </label>
+
+        <label class="field">
+          <span class="field-label">Iterations <span id="iter-value">5</span></span>
+          <input type="range" id="iter-input" min="1" max="6" step="1" value="5">
         </label>
 
         <label class="field">
