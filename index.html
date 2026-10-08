@@ -3,40 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Granum — elemental sand physics</title>
+<title>QR Studio — Custom QR Code Generator</title>
+<meta name="description" content="Create branded QR codes with your own colors and logo. Free PNG export, Pro vector SVG for print.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="app">
-    <header class="toolbar">
-      <div class="brand">GRANUM</div>
-
-      <div class="materials" id="materials">
-        <button class="mat-btn active" data-mat="SAND">Sand</button>
-        <button class="mat-btn" data-mat="WATER">Water</button>
-        <button class="mat-btn" data-mat="STONE">Stone</button>
-        <button class="mat-btn" data-mat="WOOD">Wood</button>
-        <button class="mat-btn" data-mat="FIRE">Fire</button>
-        <button class="mat-btn" data-mat="OIL">Oil</button>
-        <button class="mat-btn" data-mat="EMPTY">Erase</button>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">▦</span> QR Studio
       </div>
-
-      <div class="controls">
-        <label class="brush-label">
-          Brush
-          <input type="range" id="brush-size" min="1" max="18" value="5">
-        </label>
-        <button id="pause-btn" title="Pause / resume">Pause</button>
-        <button id="clear-btn" title="Clear canvas">Clear</button>
-      </div>
+      <button id="pro-badge" class="pro-badge">Unlock Pro</button>
     </header>
 
-    <main class="stage">
-      <canvas id="sim-canvas"></canvas>
-      <div class="hint" id="hint">click &amp; drag to place matter</div>
+    <main class="layout">
+      <section class="panel controls">
+        <label class="field">
+          <span class="field-label">Content</span>
+          <textarea id="content-input" rows="3" placeholder="https://example.com or any text">https://example.com</textarea>
+        </label>
+
+        <div class="field-row">
+          <label class="field">
+            <span class="field-label">Foreground</span>
+            <input type="color" id="fg-color" value="#111318">
+          </label>
+          <label class="field">
+            <span class="field-label">Background</span>
+            <input type="color" id="bg-color" value="#ffffff">
+          </label>
+        </div>
+
+        <label class="field">
+          <span class="field-label">Size <span id="size-value">480</span>px</span>
+          <input type="range" id="size-input" min="200" max="1000" step="20" value="480">
+        </label>
+
+        <label class="field">
+          <span class="field-label">Error correction</span>
+          <select id="ecl-input">
+            <option value="L">L — low (smallest)</option>
+            <option value="M" selected>M — medium</option>
+            <option value="Q">Q — quartile</option>
+            <option value="H">H — high (best with logo)</option>
+          </select>
+        </label>
+
+        <div class="field pro-field" id="logo-field">
+          <span class="field-label">Logo <span class="tag">Pro</span></span>
+          <div class="logo-row">
+            <input type="file" id="logo-input" accept="image/*">
+            <button id="logo-clear" type="button">Remove</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="export-row">
+          <button id="export-png" class="btn btn-primary">Download PNG</button>
+          <button id="export-svg" class="btn btn-secondary pro-field" data-pro-gate="1">
+            Download SVG <span class="tag">Pro</span>
+          </button>
+        </div>
+        <button id="export-batch" class="btn btn-ghost pro-field" data-pro-gate="1" disabled>
+          Batch export from CSV <span class="tag">Pro · coming soon</span>
+        </button>
+      </section>
+
+      <section class="panel preview">
+        <canvas id="preview-canvas"></canvas>
+      </section>
     </main>
   </div>
 
+  <div id="unlock-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <h2>Unlock QR Studio Pro</h2>
+      <ul class="pro-list">
+        <li>Embed your logo in the QR code</li>
+        <li>Export crisp vector SVG for print</li>
+        <li>Remove the "Made with QR Studio" watermark</li>
+        <li>Batch export from a CSV list (coming soon)</li>
+      </ul>
+      <a id="buy-link" class="btn btn-primary buy-btn" href="#" target="_blank" rel="noopener">Buy Pro — one-time payment</a>
+      <p class="modal-hint">Already purchased? Enter the unlock code you received:</p>
+      <div class="unlock-row">
+        <input type="text" id="unlock-code" placeholder="Unlock code">
+        <button id="unlock-submit" class="btn btn-secondary">Unlock</button>
+      </div>
+      <p class="modal-error hidden" id="unlock-error">That code doesn't look right.</p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="vendor/qrcode.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
