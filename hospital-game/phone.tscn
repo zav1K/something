@@ -1,0 +1,34 @@
+[gd_scene load_steps=2 format=3]
+
+[sub_resource type="StandardMaterial3D" id="Mat_phone"]
+albedo_color = Color(0.4, 0.36, 0.26, 1)
+roughness = 0.55
+
+[node name="Phone" type="Node3D"]
+
+[node name="Base" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 0)
+size = Vector3(0.2, 0.05, 0.22)
+material = SubResource("Mat_phone")
+
+[node name="Dial" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0525, 0.055)
+radius = 0.055
+height = 0.008
+material = SubResource("Mat_phone")
+
+[node name="HandsetBar" type="CSGCylinder3D" parent="."]
+transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0.09, -0.06)
+radius = 0.016
+height = 0.16
+material = SubResource("Mat_phone")
+
+[node name="HandsetEnd1" type="CSGSphere3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, 0.09, -0.06)
+radius = 0.024
+material = SubResource("Mat_phone")
+
+[node name="HandsetEnd2" type="CSGSphere3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08, 0.09, -0.06)
+radius = 0.024
+material = SubResource("Mat_phone")

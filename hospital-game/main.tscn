@@ -1,0 +1,3595 @@
+[gd_scene load_steps=20 format=3]
+
+[ext_resource type="Script" path="res://flicker_light.gd" id="1_flicker"]
+[ext_resource type="Shader" path="res://vhs.gdshader" id="2_vhs"]
+[ext_resource type="PackedScene" path="res://player.tscn" id="3_player"]
+[ext_resource type="PackedScene" path="res://assets/furniture/bedSingle.glb" id="4_bed"]
+[ext_resource type="PackedScene" path="res://assets/furniture/cabinetBedDrawer.glb" id="5_cabinet"]
+[ext_resource type="PackedScene" path="res://assets/furniture/desk.glb" id="6_desk"]
+[ext_resource type="PackedScene" path="res://assets/furniture/chairDesk.glb" id="7_chair"]
+[ext_resource type="PackedScene" path="res://assets/furniture/bookcaseClosed.glb" id="8_bookcase"]
+[ext_resource type="PackedScene" path="res://assets/furniture/lampRoundTable.glb" id="10_lamp"]
+[ext_resource type="PackedScene" path="res://assets/furniture/books.glb" id="11_books"]
+[ext_resource type="PackedScene" path="res://phone.tscn" id="12_phone"]
+[ext_resource type="PackedScene" path="res://assets/furniture/trashcan.glb" id="9_trash"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
+albedo_color = Color(0.36, 0.37, 0.34, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall_dado"]
+albedo_color = Color(0.33, 0.46, 0.41, 1)
+roughness = 0.45
+metallic_specular = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall_upper"]
+albedo_color = Color(0.76, 0.73, 0.63, 1)
+roughness = 0.95
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ceiling"]
+albedo_color = Color(0.68, 0.66, 0.56, 1)
+roughness = 0.95
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 1
+background_color = Color(0.01, 0.01, 0.01, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.22, 0.26, 0.22, 1)
+ambient_light_energy = 0.4
+fog_enabled = true
+fog_light_color = Color(0.05, 0.06, 0.05, 1)
+fog_density = 0.03
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vhs"]
+shader = ExtResource("2_vhs")
+shader_parameter/scanline_intensity = 0.22
+shader_parameter/noise_intensity = 0.1
+shader_parameter/aberration_amount = 0.0035
+shader_parameter/vignette_strength = 0.95
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stairs"]
+albedo_color = Color(0.42, 0.41, 0.38, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_window"]
+albedo_color = Color(0.55, 0.65, 0.6, 0.55)
+roughness = 0.1
+metallic = 0.2
+transparency = 1
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_main")
+
+[node name="Architecture" type="Node3D" parent="."]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -8)
+use_collision = true
+size = Vector3(4, 0.2, 16)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, -8)
+use_collision = true
+size = Vector3(4, 0.2, 16)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="EndWallLeftDado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.65, -16)
+use_collision = true
+size = Vector3(1, 1.3, 0.2)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallLeftUpper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 2.35, -16)
+use_collision = true
+size = Vector3(1, 2.1, 0.2)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallRightDado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.65, -16)
+use_collision = true
+size = Vector3(1, 1.3, 0.2)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallRightUpper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 2.35, -16)
+use_collision = true
+size = Vector3(1, 2.1, 0.2)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWall1Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.65, -0.75)
+use_collision = true
+size = Vector3(0.2, 1.3, 1.5)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWall1Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2.35, -0.75)
+use_collision = true
+size = Vector3(0.2, 2.1, 1.5)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWall3Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.65, -15.1)
+use_collision = true
+size = Vector3(0.2, 1.3, 1.8)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWall3Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2.35, -15.1)
+use_collision = true
+size = Vector3(0.2, 2.1, 1.8)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="NursingStation" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/NursingStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -0.1, -3)
+use_collision = true
+size = Vector3(4, 0.2, 3)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/NursingStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3.5, -3)
+use_collision = true
+size = Vector3(4, 0.2, 3)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/NursingStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.65, -3)
+use_collision = true
+size = Vector3(0.2, 1.3, 3)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/NursingStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2.35, -3)
+use_collision = true
+size = Vector3(0.2, 2.1, 3)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/NursingStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.65, -1.5)
+use_collision = true
+size = Vector3(4, 1.3, 0.2)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/NursingStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 2.35, -1.5)
+use_collision = true
+size = Vector3(4, 2.1, 0.2)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/NursingStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.65, -4.5)
+use_collision = true
+size = Vector3(4, 1.3, 0.2)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/NursingStation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 2.35, -4.5)
+use_collision = true
+size = Vector3(4, 2.1, 0.2)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="PatientRoomA" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/PatientRoomA"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, -0.1, -8)
+use_collision = true
+size = Vector3(3.5, 0.2, 2.4)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/PatientRoomA"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, 3.5, -8)
+use_collision = true
+size = Vector3(3.5, 0.2, 2.4)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/PatientRoomA"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.65, -8)
+use_collision = true
+size = Vector3(0.2, 1.3, 2.4)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/PatientRoomA"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 2.35, -8)
+use_collision = true
+size = Vector3(0.2, 2.1, 2.4)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/PatientRoomA"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, 0.65, -6.8)
+use_collision = true
+size = Vector3(3.5, 1.3, 0.2)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/PatientRoomA"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, 2.35, -6.8)
+use_collision = true
+size = Vector3(3.5, 2.1, 0.2)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/PatientRoomA"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, 0.65, -9.2)
+use_collision = true
+size = Vector3(3.5, 1.3, 0.2)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/PatientRoomA"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, 2.35, -9.2)
+use_collision = true
+size = Vector3(3.5, 2.1, 0.2)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="PatientRoomB" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/PatientRoomB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, -0.1, -13)
+use_collision = true
+size = Vector3(3.5, 0.2, 2.4)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/PatientRoomB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, 3.5, -13)
+use_collision = true
+size = Vector3(3.5, 0.2, 2.4)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/PatientRoomB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.65, -13)
+use_collision = true
+size = Vector3(0.2, 1.3, 2.4)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/PatientRoomB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 2.35, -13)
+use_collision = true
+size = Vector3(0.2, 2.1, 2.4)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/PatientRoomB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, 0.65, -11.8)
+use_collision = true
+size = Vector3(3.5, 1.3, 0.2)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/PatientRoomB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, 2.35, -11.8)
+use_collision = true
+size = Vector3(3.5, 2.1, 0.2)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/PatientRoomB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, 0.65, -14.2)
+use_collision = true
+size = Vector3(3.5, 1.3, 0.2)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/PatientRoomB"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, 2.35, -14.2)
+use_collision = true
+size = Vector3(3.5, 2.1, 0.2)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+
+[node name="CentralStairwell" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/CentralStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -19)
+use_collision = true
+size = Vector3(1.6, 0.2, 6)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="LeftWall" type="CSGBox3D" parent="Architecture/CentralStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.5, -19)
+use_collision = true
+size = Vector3(0.2, 3.4, 6)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWall" type="CSGBox3D" parent="Architecture/CentralStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.5, -19)
+use_collision = true
+size = Vector3(0.2, 3.4, 6)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="LeftStairwell" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/LeftStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 3)
+use_collision = true
+size = Vector3(4, 0.2, 6)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="LeftWallDado" type="CSGBox3D" parent="Architecture/LeftStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.65, 3)
+use_collision = true
+size = Vector3(0.2, 1.3, 6)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="LeftWallUpper" type="CSGBox3D" parent="Architecture/LeftStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 2.35, 3)
+use_collision = true
+size = Vector3(0.2, 2.1, 6)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWallDado" type="CSGBox3D" parent="Architecture/LeftStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.65, 3)
+use_collision = true
+size = Vector3(0.2, 1.3, 6)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallUpper" type="CSGBox3D" parent="Architecture/LeftStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2.35, 3)
+use_collision = true
+size = Vector3(0.2, 2.1, 6)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/LeftStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 0.65, 6)
+use_collision = true
+size = Vector3(1.8, 1.3, 0.2)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/LeftStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 2.35, 6)
+use_collision = true
+size = Vector3(1.8, 2.1, 0.2)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/LeftStairwell"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2, 1.65, 1.5)
+size = Vector3(1.4, 1.3, 0.06)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="RampUp" type="CSGBox3D" parent="Architecture/LeftStairwell"]
+transform = Transform3D(1, 0, 0, 0, 0.8412, -0.5409, 0, 0.5409, 0.8412, 0.6, 1.8, 3.1)
+use_collision = true
+size = Vector3(1.2, 0.12, 6.657)
+material = SubResource("StandardMaterial3D_stairs")
+
+[node name="RampUp" type="CSGBox3D" parent="Architecture/CentralStairwell"]
+transform = Transform3D(-1, 0, 0, 0, 0.8412, 0.5409, 0, 0.5409, -0.8412, 1.4, 1.8, -19.1)
+use_collision = true
+size = Vector3(1.2, 0.12, 6.657)
+material = SubResource("StandardMaterial3D_stairs")
+
+[node name="RampDown" type="CSGBox3D" parent="Architecture/CentralStairwell"]
+transform = Transform3D(-1, 0, 0, 0, 0.8412, -0.5409, 0, -0.5409, -0.8412, -1.4, -1.8, -19.1)
+use_collision = true
+size = Vector3(1.2, 0.12, 6.657)
+material = SubResource("StandardMaterial3D_stairs")
+
+[node name="L_Pillar1Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 0.6500, -2.4000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="L_Pillar1Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 2.3500, -2.4000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="L_Pillar2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 0.6500, -5.8000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="L_Pillar2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 2.3500, -5.8000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="L_Pillar3Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 0.6500, -9.4000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="L_Pillar3Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 2.3500, -9.4000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="L_Pillar4Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 0.6500, -12.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="L_Pillar4Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 2.3500, -12.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="L_Pillar5Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 0.6500, -15.2000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.6000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="L_Pillar5Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 2.3500, -15.2000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.6000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Ordinatorska" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Ordinatorska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, -0.1000, -1.1000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Ordinatorska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 3.5000, -1.1000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Ordinatorska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, 0.6500, -1.1000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Ordinatorska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, 2.3500, -1.1000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Ordinatorska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 0.6500, -2.2000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Ordinatorska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 2.3500, -2.2000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Ordinatorska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 0.6500, 0.0000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Ordinatorska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 2.3500, 0.0000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Ordinatorska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3000, 1.6500, -1.1000)
+size = Vector3(0.0600, 1.3000, 1.3200)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Sestrynska" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Sestrynska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, -0.1000, -3.7000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Sestrynska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 3.5000, -3.7000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Sestrynska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, 0.6500, -3.7000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Sestrynska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, 2.3500, -3.7000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Sestrynska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 0.6500, -4.8000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Sestrynska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 2.3500, -4.8000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Sestrynska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 0.6500, -2.6000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Sestrynska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 2.3500, -2.6000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Sestrynska"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3000, 1.6500, -3.7000)
+size = Vector3(0.0600, 1.3000, 1.3200)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Ward3" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Ward3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, -0.1000, -10.7000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Ward3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 3.5000, -10.7000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Ward3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, 0.6500, -10.7000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Ward3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, 2.3500, -10.7000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Ward3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 0.6500, -11.8000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Ward3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 2.3500, -11.8000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Ward3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 0.6500, -9.6000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Ward3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 2.3500, -9.6000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Ward3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4000, 1.6500, -10.7000)
+size = Vector3(0.0600, 1.3000, 1.3200)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Manipulyaciyna" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Manipulyaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, -0.1000, -13.3000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Manipulyaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 3.5000, -13.3000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Manipulyaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, 0.6500, -13.3000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Manipulyaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, 2.3500, -13.3000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Manipulyaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 0.6500, -14.4000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Manipulyaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 2.3500, -14.4000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Manipulyaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 0.6500, -12.2000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Manipulyaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 2.3500, -12.2000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Manipulyaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3000, 1.6500, -13.3000)
+size = Vector3(0.0600, 1.3000, 1.3200)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="R_Pillar1Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 0.6500, -4.7000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="R_Pillar1Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 2.3500, -4.7000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="R_Pillar2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 0.6500, -7.3000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="R_Pillar2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 2.3500, -7.3000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="R_Pillar3Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 0.6500, -9.9000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="R_Pillar3Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 2.3500, -9.9000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="R_Pillar4Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 0.6500, -11.7000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="R_Pillar4Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 2.3500, -11.7000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Ward4" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Ward4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, -0.1000, -6.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Ward4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 3.5000, -6.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Ward4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5000, 0.6500, -6.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Ward4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5000, 2.3500, -6.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Ward4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 0.6500, -7.1000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Ward4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 2.3500, -7.1000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Ward4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 0.6500, -4.9000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Ward4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 2.3500, -4.9000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Ward4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.4000, 1.6500, -6.0000)
+size = Vector3(0.0600, 1.3000, 1.3200)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Ward5" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Ward5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, -0.1000, -8.6000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Ward5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 3.5000, -8.6000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Ward5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5000, 0.6500, -8.6000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Ward5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5000, 2.3500, -8.6000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Ward5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 0.6500, -9.7000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Ward5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 2.3500, -9.7000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Ward5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 0.6500, -7.5000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Ward5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 2.3500, -7.5000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Ward5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.4000, 1.6500, -8.6000)
+size = Vector3(0.0600, 1.3000, 1.3200)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="SanvuzolDushova" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/SanvuzolDushova"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, -0.1000, -10.8500)
+use_collision = true
+size = Vector3(2.0000, 0.2000, 1.5000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/SanvuzolDushova"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 3.5000, -10.8500)
+use_collision = true
+size = Vector3(2.0000, 0.2000, 1.5000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/SanvuzolDushova"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0000, 0.6500, -10.8500)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.5000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/SanvuzolDushova"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0000, 2.3500, -10.8500)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.5000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/SanvuzolDushova"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 0.6500, -11.6000)
+use_collision = true
+size = Vector3(2.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/SanvuzolDushova"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 2.3500, -11.6000)
+use_collision = true
+size = Vector3(2.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/SanvuzolDushova"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 0.6500, -10.1000)
+use_collision = true
+size = Vector3(2.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/SanvuzolDushova"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 2.3500, -10.1000)
+use_collision = true
+size = Vector3(2.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/SanvuzolDushova"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9000, 1.6500, -10.8500)
+size = Vector3(0.0600, 1.3000, 0.9000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Floor2" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -0.1000, -30.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 16.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling2" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 3.5000, -30.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 16.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="EndWallLeft2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5000, 0.6500, -38.0000)
+use_collision = true
+size = Vector3(1.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallLeft2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5000, 2.3500, -38.0000)
+use_collision = true
+size = Vector3(1.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallRight2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5000, 0.6500, -38.0000)
+use_collision = true
+size = Vector3(1.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallRight2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5000, 2.3500, -38.0000)
+use_collision = true
+size = Vector3(1.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="R_Pillar0_2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 0.6500, -22.7500)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.5000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="R_Pillar0_2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 2.3500, -22.7500)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.5000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="R_Pillar1_2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 0.6500, -26.7000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="R_Pillar1_2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 2.3500, -26.7000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="R_Pillar2_2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 0.6500, -29.3000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="R_Pillar2_2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 2.3500, -29.3000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="R_Pillar3_2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 0.6500, -31.9000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="R_Pillar3_2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 2.3500, -31.9000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="R_Pillar4_2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 0.6500, -33.7000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="R_Pillar4_2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 2.3500, -33.7000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="R_Pillar5_2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 0.6500, -37.1000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.8000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="R_Pillar5_2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 2.3500, -37.1000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.8000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="L_Pillar1_2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 0.6500, -24.4000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="L_Pillar1_2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 2.3500, -24.4000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="L_Pillar2_2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 0.6500, -27.8000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="L_Pillar2_2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 2.3500, -27.8000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="L_Pillar3_2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 0.6500, -31.4000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="L_Pillar3_2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 2.3500, -31.4000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="L_Pillar4_2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 0.6500, -34.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="L_Pillar4_2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 2.3500, -34.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 0.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="L_Pillar5_2Dado" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 0.6500, -37.2000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.6000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="L_Pillar5_2Upper" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 2.3500, -37.2000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.6000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="NursingPost2" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/NursingPost2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0000, -0.1000, -25.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 3.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/NursingPost2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0000, 3.5000, -25.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 3.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/NursingPost2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.0000, 0.6500, -25.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/NursingPost2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.0000, 2.3500, -25.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/NursingPost2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0000, 0.6500, -26.5000)
+use_collision = true
+size = Vector3(4.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/NursingPost2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0000, 2.3500, -26.5000)
+use_collision = true
+size = Vector3(4.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/NursingPost2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0000, 0.6500, -23.5000)
+use_collision = true
+size = Vector3(4.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/NursingPost2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0000, 2.3500, -23.5000)
+use_collision = true
+size = Vector3(4.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="PatientRoomA2" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/PatientRoomA2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, -0.1000, -30.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.4000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/PatientRoomA2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 3.5000, -30.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.4000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/PatientRoomA2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, 0.6500, -30.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/PatientRoomA2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, 2.3500, -30.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/PatientRoomA2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 0.6500, -31.2000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/PatientRoomA2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 2.3500, -31.2000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/PatientRoomA2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 0.6500, -28.8000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/PatientRoomA2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 2.3500, -28.8000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/PatientRoomA2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4000, 1.6500, -30.0000)
+size = Vector3(0.0600, 1.3000, 1.4000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="PatientRoomB2" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/PatientRoomB2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, -0.1000, -35.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.4000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/PatientRoomB2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 3.5000, -35.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.4000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/PatientRoomB2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5000, 0.6500, -35.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.4000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/PatientRoomB2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5000, 2.3500, -35.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.4000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/PatientRoomB2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 0.6500, -36.2000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/PatientRoomB2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 2.3500, -36.2000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/PatientRoomB2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 0.6500, -33.8000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/PatientRoomB2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 2.3500, -33.8000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/PatientRoomB2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.4000, 1.6500, -35.0000)
+size = Vector3(0.0600, 1.3000, 1.4000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Ordinatorska2" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Ordinatorska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, -0.1000, -23.1000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Ordinatorska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 3.5000, -23.1000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Ordinatorska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, 0.6500, -23.1000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Ordinatorska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, 2.3500, -23.1000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Ordinatorska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 0.6500, -24.2000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Ordinatorska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 2.3500, -24.2000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Ordinatorska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 0.6500, -22.0000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Ordinatorska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 2.3500, -22.0000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Ordinatorska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3000, 1.6500, -23.1000)
+size = Vector3(0.0600, 1.3000, 1.3200)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Sestrynska2" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Sestrynska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, -0.1000, -25.7000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Sestrynska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 3.5000, -25.7000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Sestrynska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, 0.6500, -25.7000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Sestrynska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, 2.3500, -25.7000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Sestrynska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 0.6500, -26.8000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Sestrynska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 2.3500, -26.8000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Sestrynska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 0.6500, -24.6000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Sestrynska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 2.3500, -24.6000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Sestrynska2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3000, 1.6500, -25.7000)
+size = Vector3(0.0600, 1.3000, 1.3200)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Ward32" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Ward32"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, -0.1000, -32.7000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Ward32"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 3.5000, -32.7000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Ward32"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, 0.6500, -32.7000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Ward32"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, 2.3500, -32.7000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Ward32"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 0.6500, -33.8000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Ward32"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 2.3500, -33.8000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Ward32"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 0.6500, -31.6000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Ward32"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 2.3500, -31.6000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Ward32"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4000, 1.6500, -32.7000)
+size = Vector3(0.0600, 1.3000, 1.3200)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Manipulyaciyna2" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Manipulyaciyna2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, -0.1000, -35.3000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Manipulyaciyna2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 3.5000, -35.3000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Manipulyaciyna2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, 0.6500, -35.3000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Manipulyaciyna2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, 2.3500, -35.3000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Manipulyaciyna2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 0.6500, -36.4000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Manipulyaciyna2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 2.3500, -36.4000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Manipulyaciyna2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 0.6500, -34.2000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Manipulyaciyna2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, 2.3500, -34.2000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Manipulyaciyna2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3000, 1.6500, -35.3000)
+size = Vector3(0.0600, 1.3000, 1.3200)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Ward42" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Ward42"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, -0.1000, -28.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Ward42"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 3.5000, -28.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Ward42"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5000, 0.6500, -28.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Ward42"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5000, 2.3500, -28.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Ward42"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 0.6500, -29.1000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Ward42"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 2.3500, -29.1000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Ward42"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 0.6500, -26.9000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Ward42"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 2.3500, -26.9000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Ward42"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.4000, 1.6500, -28.0000)
+size = Vector3(0.0600, 1.3000, 1.3200)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Ward52" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Ward52"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, -0.1000, -30.6000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Ward52"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 3.5000, -30.6000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 2.2000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Ward52"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5000, 0.6500, -30.6000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Ward52"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5000, 2.3500, -30.6000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Ward52"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 0.6500, -31.7000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Ward52"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 2.3500, -31.7000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Ward52"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 0.6500, -29.5000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Ward52"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, 2.3500, -29.5000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Ward52"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.4000, 1.6500, -30.6000)
+size = Vector3(0.0600, 1.3000, 1.3200)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="SanvuzolDushova2" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/SanvuzolDushova2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, -0.1000, -32.8500)
+use_collision = true
+size = Vector3(2.0000, 0.2000, 1.5000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/SanvuzolDushova2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 3.5000, -32.8500)
+use_collision = true
+size = Vector3(2.0000, 0.2000, 1.5000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/SanvuzolDushova2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0000, 0.6500, -32.8500)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.5000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/SanvuzolDushova2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0000, 2.3500, -32.8500)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.5000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/SanvuzolDushova2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 0.6500, -33.6000)
+use_collision = true
+size = Vector3(2.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/SanvuzolDushova2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 2.3500, -33.6000)
+use_collision = true
+size = Vector3(2.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/SanvuzolDushova2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 0.6500, -32.1000)
+use_collision = true
+size = Vector3(2.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/SanvuzolDushova2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 2.3500, -32.1000)
+use_collision = true
+size = Vector3(2.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/SanvuzolDushova2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9000, 1.6500, -32.8500)
+size = Vector3(0.0600, 1.3000, 0.9000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="RightStairwell" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/RightStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -0.1000, -41.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 6.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="LeftWallDado" type="CSGBox3D" parent="Architecture/RightStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 0.6500, -41.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 6.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="LeftWallUpper" type="CSGBox3D" parent="Architecture/RightStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 2.3500, -41.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 6.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWallDado" type="CSGBox3D" parent="Architecture/RightStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 0.6500, -41.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 6.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallUpper" type="CSGBox3D" parent="Architecture/RightStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 2.3500, -41.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 6.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/RightStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.6500, -44.0000)
+use_collision = true
+size = Vector3(4.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/RightStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 2.3500, -44.0000)
+use_collision = true
+size = Vector3(4.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RampUp" type="CSGBox3D" parent="Architecture/RightStairwell"]
+transform = Transform3D(-1, 0, 0, 0, 0.8412, 0.5409, 0, 0.5409, -0.8412, 1.4, 1.8, -41.1)
+use_collision = true
+size = Vector3(1.2000, 0.1200, 6.6570)
+material = SubResource("StandardMaterial3D_stairs")
+
+[node name="RightWallADado" type="CSGBox3D" parent="Architecture/CentralStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 0.6500, -16.8750)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.7500)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallAUpper" type="CSGBox3D" parent="Architecture/CentralStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 2.3500, -16.8750)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.7500)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWallBDado" type="CSGBox3D" parent="Architecture/CentralStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 0.6500, -20.1250)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.7500)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallBUpper" type="CSGBox3D" parent="Architecture/CentralStairwell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 2.3500, -20.1250)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.7500)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Elevator" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Elevator"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, -0.1000, -18.5000)
+use_collision = true
+size = Vector3(2.0000, 0.2000, 1.5000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Elevator"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 3.5000, -18.5000)
+use_collision = true
+size = Vector3(2.0000, 0.2000, 1.5000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Elevator"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0000, 0.6500, -18.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.5000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Elevator"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0000, 2.3500, -18.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.5000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Elevator"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 0.6500, -17.7500)
+use_collision = true
+size = Vector3(2.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Elevator"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 2.3500, -17.7500)
+use_collision = true
+size = Vector3(2.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Elevator"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 0.6500, -19.2500)
+use_collision = true
+size = Vector3(2.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Elevator"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0000, 2.3500, -19.2500)
+use_collision = true
+size = Vector3(2.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="CarBody" type="CSGBox3D" parent="Architecture/Elevator"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6000, 1.1000, -18.5000)
+use_collision = true
+size = Vector3(1.2000, 2.2000, 1.2000)
+material = SubResource("StandardMaterial3D_stairs")
+
+[node name="CarDoor" type="CSGBox3D" parent="Architecture/Elevator"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9500, 1.1000, -18.5000)
+size = Vector3(0.0800, 2.1000, 1.1000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Floor3" type="Node3D" parent="Architecture"]
+
+[node name="FloorA" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 3.8000, -8.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 16.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="CeilingA" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 7.4000, -8.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 16.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="EndWallADado" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 4.5500, 0.1000)
+use_collision = true
+size = Vector3(4.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallAUpper" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 6.2500, 0.1000)
+use_collision = true
+size = Vector3(4.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWallA_preDado" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 4.5500, -1.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallA_preUpper" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 6.2500, -1.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWallA_postDado" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 4.5500, -13.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 5.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallA_postUpper" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 6.2500, -13.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 5.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="LeftWallA_preDado" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 4.5500, -2.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 5.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="LeftWallA_preUpper" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 6.2500, -2.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 5.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="LeftWallA_postDado" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 4.5500, -13.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 5.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="LeftWallA_postUpper" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 6.2500, -13.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 5.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="SurgWard1" type="Node3D" parent="Architecture/Floor3"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Floor3/SurgWard1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 3.8000, -8.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 6.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Floor3/SurgWard1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 7.4000, -8.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 6.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Floor3/SurgWard1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, 4.5500, -8.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 6.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Floor3/SurgWard1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, 6.2500, -8.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 6.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Floor3/SurgWard1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 4.5500, -11.0000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Floor3/SurgWard1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 6.2500, -11.0000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Floor3/SurgWard1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 4.5500, -5.0000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Floor3/SurgWard1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 6.2500, -5.0000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Floor3/SurgWard1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4000, 5.5500, -8.0000)
+size = Vector3(0.0600, 1.3000, 1.4000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Perevyazochna" type="Node3D" parent="Architecture/Floor3"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Floor3/Perevyazochna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5000, 3.8000, -7.0000)
+use_collision = true
+size = Vector3(3.0000, 0.2000, 8.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Floor3/Perevyazochna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5000, 7.4000, -7.0000)
+use_collision = true
+size = Vector3(3.0000, 0.2000, 8.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Floor3/Perevyazochna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0000, 4.5500, -7.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 8.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Floor3/Perevyazochna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0000, 6.2500, -7.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 8.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Floor3/Perevyazochna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5000, 4.5500, -11.0000)
+use_collision = true
+size = Vector3(3.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Floor3/Perevyazochna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5000, 6.2500, -11.0000)
+use_collision = true
+size = Vector3(3.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Floor3/Perevyazochna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5000, 4.5500, -3.0000)
+use_collision = true
+size = Vector3(3.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Floor3/Perevyazochna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5000, 6.2500, -3.0000)
+use_collision = true
+size = Vector3(3.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Floor3/Perevyazochna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.9000, 5.5500, -7.0000)
+size = Vector3(0.0600, 1.3000, 1.4000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="FloorB" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 3.8000, -30.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 16.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="CeilingB" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 7.4000, -30.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 16.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="EndWallBDado" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 4.5500, -37.9000)
+use_collision = true
+size = Vector3(4.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallBUpper" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 6.2500, -37.9000)
+use_collision = true
+size = Vector3(4.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="LeftWallB_preDado" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 4.5500, -23.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="LeftWallB_preUpper" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 6.2500, -23.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="LeftWallB_postDado" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 4.5500, -34.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 7.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="LeftWallB_postUpper" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, 6.2500, -34.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 7.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWallB_preDado" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 4.5500, -22.7500)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.5000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallB_preUpper" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 6.2500, -22.7500)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.5000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWallB_p1Dado" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 4.5500, -27.2500)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.5000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallB_p1Upper" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 6.2500, -27.2500)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.5000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWallB_p2Dado" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 4.5500, -32.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallB_p2Upper" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 6.2500, -32.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWallB_postDado" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 4.5500, -37.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallB_postUpper" type="CSGBox3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, 6.2500, -37.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Reanimation" type="Node3D" parent="Architecture/Floor3"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Floor3/Reanimation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 3.8000, -28.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 6.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Floor3/Reanimation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 7.4000, -28.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 6.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Floor3/Reanimation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, 4.5500, -28.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 6.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Floor3/Reanimation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, 6.2500, -28.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 6.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Floor3/Reanimation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 4.5500, -31.0000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Floor3/Reanimation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 6.2500, -31.0000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Floor3/Reanimation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 4.5500, -25.0000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Floor3/Reanimation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, 6.2500, -25.0000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Floor3/Reanimation"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4000, 5.5500, -28.0000)
+size = Vector3(0.0600, 1.3000, 1.4000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Peredoperaciyna" type="Node3D" parent="Architecture/Floor3"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Floor3/Peredoperaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4000, 3.8000, -25.0000)
+use_collision = true
+size = Vector3(2.8000, 0.2000, 3.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Floor3/Peredoperaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4000, 7.4000, -25.0000)
+use_collision = true
+size = Vector3(2.8000, 0.2000, 3.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Floor3/Peredoperaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8000, 4.5500, -25.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Floor3/Peredoperaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8000, 6.2500, -25.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Floor3/Peredoperaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4000, 4.5500, -26.5000)
+use_collision = true
+size = Vector3(2.8000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Floor3/Peredoperaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4000, 6.2500, -26.5000)
+use_collision = true
+size = Vector3(2.8000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Floor3/Peredoperaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4000, 4.5500, -23.5000)
+use_collision = true
+size = Vector3(2.8000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Floor3/Peredoperaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4000, 6.2500, -23.5000)
+use_collision = true
+size = Vector3(2.8000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Floor3/Peredoperaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.7000, 5.5500, -25.0000)
+size = Vector3(0.0600, 1.3000, 1.4000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Operaciyna" type="Node3D" parent="Architecture/Floor3"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Floor3/Operaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6000, 3.8000, -30.0000)
+use_collision = true
+size = Vector3(3.2000, 0.2000, 4.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Floor3/Operaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6000, 7.4000, -30.0000)
+use_collision = true
+size = Vector3(3.2000, 0.2000, 4.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Floor3/Operaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2000, 4.5500, -30.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Floor3/Operaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2000, 6.2500, -30.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Floor3/Operaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6000, 4.5500, -32.0000)
+use_collision = true
+size = Vector3(3.2000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Floor3/Operaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6000, 6.2500, -32.0000)
+use_collision = true
+size = Vector3(3.2000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Floor3/Operaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6000, 4.5500, -28.0000)
+use_collision = true
+size = Vector3(3.2000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Floor3/Operaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6000, 6.2500, -28.0000)
+use_collision = true
+size = Vector3(3.2000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Floor3/Operaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1000, 5.5500, -30.0000)
+size = Vector3(0.0600, 1.3000, 1.4000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Sterylizaciyna" type="Node3D" parent="Architecture/Floor3"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Floor3/Sterylizaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, 3.8000, -34.5000)
+use_collision = true
+size = Vector3(2.5000, 0.2000, 3.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Floor3/Sterylizaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, 7.4000, -34.5000)
+use_collision = true
+size = Vector3(2.5000, 0.2000, 3.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Floor3/Sterylizaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5000, 4.5500, -34.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Floor3/Sterylizaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5000, 6.2500, -34.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Floor3/Sterylizaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, 4.5500, -36.0000)
+use_collision = true
+size = Vector3(2.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Floor3/Sterylizaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, 6.2500, -36.0000)
+use_collision = true
+size = Vector3(2.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Floor3/Sterylizaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, 4.5500, -33.0000)
+use_collision = true
+size = Vector3(2.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Floor3/Sterylizaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, 6.2500, -33.0000)
+use_collision = true
+size = Vector3(2.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Floor3/Sterylizaciyna"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4000, 5.5500, -34.5000)
+size = Vector3(0.0600, 1.3000, 1.4000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Floor1" type="Node3D" parent="Architecture"]
+
+[node name="FloorA" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -4.0000, -8.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 16.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="CeilingA" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -0.4000, -8.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 16.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="EndWallADado" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -3.2500, 0.1000)
+use_collision = true
+size = Vector3(4.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallAUpper" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -1.5500, 0.1000)
+use_collision = true
+size = Vector3(4.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWallA_preDado" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, -3.2500, -1.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallA_preUpper" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, -1.5500, -1.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWallA_postDado" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, -3.2500, -11.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 10.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallA_postUpper" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, -1.5500, -11.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 10.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="LeftWallA_preDado" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -3.2500, -1.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="LeftWallA_preUpper" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -1.5500, -1.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="LeftWallA_postDado" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -3.2500, -15.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="LeftWallA_postUpper" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -1.5500, -15.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="PriymalneHall" type="Node3D" parent="Architecture/Floor1"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Floor1/PriymalneHall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, -4.0000, -8.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 12.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Floor1/PriymalneHall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, -0.4000, -8.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 12.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Floor1/PriymalneHall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, -3.2500, -14.0000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Floor1/PriymalneHall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, -1.5500, -14.0000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Floor1/PriymalneHall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, -3.2500, -2.0000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Floor1/PriymalneHall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.7500, -1.5500, -2.0000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Floor1/PriymalneHall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4000, -2.2500, -8.0000)
+size = Vector3(0.0600, 1.3000, 1.4000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="FarWallPreDado" type="CSGBox3D" parent="Architecture/Floor1/PriymalneHall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, -3.2500, -5.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 6.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallPreUpper" type="CSGBox3D" parent="Architecture/Floor1/PriymalneHall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, -1.5500, -5.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 6.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="FarWallPostDado" type="CSGBox3D" parent="Architecture/Floor1/PriymalneHall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, -3.2500, -13.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallPostUpper" type="CSGBox3D" parent="Architecture/Floor1/PriymalneHall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5000, -1.5500, -13.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Sanpropusknyk" type="Node3D" parent="Architecture/Floor1"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Floor1/Sanpropusknyk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, -4.0000, -4.0000)
+use_collision = true
+size = Vector3(2.5000, 0.2000, 4.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Floor1/Sanpropusknyk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, -0.4000, -4.0000)
+use_collision = true
+size = Vector3(2.5000, 0.2000, 4.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Floor1/Sanpropusknyk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5000, -3.2500, -4.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Floor1/Sanpropusknyk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5000, -1.5500, -4.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Floor1/Sanpropusknyk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, -3.2500, -6.0000)
+use_collision = true
+size = Vector3(2.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Floor1/Sanpropusknyk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, -1.5500, -6.0000)
+use_collision = true
+size = Vector3(2.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Floor1/Sanpropusknyk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, -3.2500, -2.0000)
+use_collision = true
+size = Vector3(2.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Floor1/Sanpropusknyk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, -1.5500, -2.0000)
+use_collision = true
+size = Vector3(2.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Floor1/Sanpropusknyk"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4000, -2.2500, -4.0000)
+size = Vector3(0.0600, 1.3000, 1.4000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="FloorB" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -4.0000, -30.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 16.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="CeilingB" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -0.4000, -30.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 16.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="EndWallBDado" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -3.2500, -37.9000)
+use_collision = true
+size = Vector3(4.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallBUpper" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -1.5500, -37.9000)
+use_collision = true
+size = Vector3(4.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="LeftWallB_preDado" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -3.2500, -22.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="LeftWallB_preUpper" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -1.5500, -22.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="LeftWallB_midDado" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -3.2500, -28.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="LeftWallB_midUpper" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -1.5500, -28.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 2.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="LeftWallB_postDado" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -3.2500, -35.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 5.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="LeftWallB_postUpper" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -1.5500, -35.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 5.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWallB_preDado" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, -3.2500, -22.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallB_preUpper" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, -1.5500, -22.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="RightWallB_postDado" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, -3.2500, -37.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 1.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="RightWallB_postUpper" type="CSGBox3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, -1.5500, -37.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 1.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="GolovlikarKabinet" type="Node3D" parent="Architecture/Floor1"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Floor1/GolovlikarKabinet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, -4.0000, -25.0000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 4.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Floor1/GolovlikarKabinet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, -0.4000, -25.0000)
+use_collision = true
+size = Vector3(2.4000, 0.2000, 4.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Floor1/GolovlikarKabinet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, -3.2500, -25.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Floor1/GolovlikarKabinet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4000, -1.5500, -25.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Floor1/GolovlikarKabinet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, -3.2500, -27.0000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Floor1/GolovlikarKabinet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, -1.5500, -27.0000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Floor1/GolovlikarKabinet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, -3.2500, -23.0000)
+use_collision = true
+size = Vector3(2.4000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Floor1/GolovlikarKabinet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2000, -1.5500, -23.0000)
+use_collision = true
+size = Vector3(2.4000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Floor1/GolovlikarKabinet"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3000, -2.2500, -25.0000)
+size = Vector3(0.0600, 1.3000, 1.4000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Rentgen" type="Node3D" parent="Architecture/Floor1"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Floor1/Rentgen"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4000, -4.0000, -31.0000)
+use_collision = true
+size = Vector3(2.8000, 0.2000, 4.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Floor1/Rentgen"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4000, -0.4000, -31.0000)
+use_collision = true
+size = Vector3(2.8000, 0.2000, 4.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Floor1/Rentgen"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8000, -3.2500, -31.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Floor1/Rentgen"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8000, -1.5500, -31.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Floor1/Rentgen"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4000, -3.2500, -33.0000)
+use_collision = true
+size = Vector3(2.8000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Floor1/Rentgen"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4000, -1.5500, -33.0000)
+use_collision = true
+size = Vector3(2.8000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Floor1/Rentgen"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4000, -3.2500, -29.0000)
+use_collision = true
+size = Vector3(2.8000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Floor1/Rentgen"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4000, -1.5500, -29.0000)
+use_collision = true
+size = Vector3(2.8000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Floor1/Rentgen"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7000, -2.2500, -31.0000)
+size = Vector3(0.0600, 1.3000, 1.4000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Reyestratura" type="Node3D" parent="Architecture/Floor1"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Floor1/Reyestratura"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, -4.0000, -30.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 14.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Floor1/Reyestratura"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, -0.4000, -30.0000)
+use_collision = true
+size = Vector3(3.5000, 0.2000, 14.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Floor1/Reyestratura"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5000, -3.2500, -30.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 14.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Floor1/Reyestratura"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5000, -1.5500, -30.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 14.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Floor1/Reyestratura"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, -3.2500, -37.0000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Floor1/Reyestratura"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, -1.5500, -37.0000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Floor1/Reyestratura"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, -3.2500, -23.0000)
+use_collision = true
+size = Vector3(3.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Floor1/Reyestratura"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7500, -1.5500, -23.0000)
+use_collision = true
+size = Vector3(3.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Window" type="CSGBox3D" parent="Architecture/Floor1/Reyestratura"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.4000, -2.2500, -30.0000)
+size = Vector3(0.0600, 1.3000, 1.4000)
+material = SubResource("StandardMaterial3D_window")
+
+[node name="Basement" type="Node3D" parent="Architecture"]
+
+[node name="AccessFloor" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5000, -4.0000, -10.0000)
+use_collision = true
+size = Vector3(2.0000, 0.2000, 4.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="AccessFarDado" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5000, -3.2500, -10.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="AccessFarUpper" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5000, -1.5500, -10.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="AccessNearDado" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5000, -3.2500, -8.0000)
+use_collision = true
+size = Vector3(2.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="AccessNearUpper" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5000, -1.5500, -8.0000)
+use_collision = true
+size = Vector3(2.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="AccessFarEndDado" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5000, -3.2500, -12.0000)
+use_collision = true
+size = Vector3(2.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="AccessFarEndUpper" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5000, -1.5500, -12.0000)
+use_collision = true
+size = Vector3(2.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="AccessRamp" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(-1, 0, 0, 0, 0.8413, -0.5405, 0, -0.5405, -0.8413, -6.5, -5.8500, -15.0350)
+use_collision = true
+size = Vector3(1.6000, 0.1200, 7.0700)
+material = SubResource("StandardMaterial3D_stairs")
+
+[node name="BFloor" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -7.9000, -23.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 14.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="BCeiling" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -4.3000, -23.0000)
+use_collision = true
+size = Vector3(4.0000, 0.2000, 14.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="BEndNearDado" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -7.1500, -16.1000)
+use_collision = true
+size = Vector3(4.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="BEndNearUpper" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -5.4500, -16.1000)
+use_collision = true
+size = Vector3(4.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="BEndFarDado" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -7.1500, -29.9000)
+use_collision = true
+size = Vector3(4.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="BEndFarUpper" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, -5.4500, -29.9000)
+use_collision = true
+size = Vector3(4.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="BLeftWall1Dado" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -7.1500, -18.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="BLeftWall1Upper" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -5.4500, -18.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="BLeftWall2Dado" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -7.1500, -26.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 5.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="BLeftWall2Upper" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0000, -5.4500, -26.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 5.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="BRightWall1Dado" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, -7.1500, -18.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="BRightWall1Upper" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, -5.4500, -18.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="BRightWall2Dado" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, -7.1500, -26.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 5.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="BRightWall2Upper" type="CSGBox3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0000, -5.4500, -26.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 5.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Morg" type="Node3D" parent="Architecture/Basement"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Basement/Morg"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5000, -7.9000, -22.0000)
+use_collision = true
+size = Vector3(3.0000, 0.2000, 4.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Basement/Morg"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5000, -4.3000, -22.0000)
+use_collision = true
+size = Vector3(3.0000, 0.2000, 4.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Basement/Morg"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.0000, -7.1500, -22.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Basement/Morg"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.0000, -5.4500, -22.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Basement/Morg"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5000, -7.1500, -24.0000)
+use_collision = true
+size = Vector3(3.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Basement/Morg"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5000, -5.4500, -24.0000)
+use_collision = true
+size = Vector3(3.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Basement/Morg"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5000, -7.1500, -20.0000)
+use_collision = true
+size = Vector3(3.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Basement/Morg"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5000, -5.4500, -20.0000)
+use_collision = true
+size = Vector3(3.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Sklad" type="Node3D" parent="Architecture/Basement"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Basement/Sklad"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, -7.9000, -22.0000)
+use_collision = true
+size = Vector3(2.5000, 0.2000, 4.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Basement/Sklad"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, -4.3000, -22.0000)
+use_collision = true
+size = Vector3(2.5000, 0.2000, 4.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Basement/Sklad"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5000, -7.1500, -22.0000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Basement/Sklad"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5000, -5.4500, -22.0000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 4.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Basement/Sklad"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, -7.1500, -24.0000)
+use_collision = true
+size = Vector3(2.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Basement/Sklad"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, -5.4500, -24.0000)
+use_collision = true
+size = Vector3(2.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Basement/Sklad"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, -7.1500, -20.0000)
+use_collision = true
+size = Vector3(2.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Basement/Sklad"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2500, -5.4500, -20.0000)
+use_collision = true
+size = Vector3(2.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Pralnya" type="Node3D" parent="Architecture/Basement"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Basement/Pralnya"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2500, -7.9000, -27.5000)
+use_collision = true
+size = Vector3(2.5000, 0.2000, 3.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Basement/Pralnya"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2500, -4.3000, -27.5000)
+use_collision = true
+size = Vector3(2.5000, 0.2000, 3.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Basement/Pralnya"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5000, -7.1500, -27.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Basement/Pralnya"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5000, -5.4500, -27.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Basement/Pralnya"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2500, -7.1500, -29.0000)
+use_collision = true
+size = Vector3(2.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Basement/Pralnya"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2500, -5.4500, -29.0000)
+use_collision = true
+size = Vector3(2.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Basement/Pralnya"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2500, -7.1500, -26.0000)
+use_collision = true
+size = Vector3(2.5000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Basement/Pralnya"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2500, -5.4500, -26.0000)
+use_collision = true
+size = Vector3(2.5000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Harchoblok" type="Node3D" parent="Architecture/Basement"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Basement/Harchoblok"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5000, -7.9000, -27.5000)
+use_collision = true
+size = Vector3(3.0000, 0.2000, 3.0000)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture/Basement/Harchoblok"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5000, -4.3000, -27.5000)
+use_collision = true
+size = Vector3(3.0000, 0.2000, 3.0000)
+material = SubResource("StandardMaterial3D_ceiling")
+
+[node name="FarWallDado" type="CSGBox3D" parent="Architecture/Basement/Harchoblok"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0000, -7.1500, -27.5000)
+use_collision = true
+size = Vector3(0.2000, 1.3000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="FarWallUpper" type="CSGBox3D" parent="Architecture/Basement/Harchoblok"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.0000, -5.4500, -27.5000)
+use_collision = true
+size = Vector3(0.2000, 2.1000, 3.0000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallNearDado" type="CSGBox3D" parent="Architecture/Basement/Harchoblok"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5000, -7.1500, -29.0000)
+use_collision = true
+size = Vector3(3.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallNearUpper" type="CSGBox3D" parent="Architecture/Basement/Harchoblok"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5000, -5.4500, -29.0000)
+use_collision = true
+size = Vector3(3.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="EndWallFarDado" type="CSGBox3D" parent="Architecture/Basement/Harchoblok"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5000, -7.1500, -26.0000)
+use_collision = true
+size = Vector3(3.0000, 1.3000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="EndWallFarUpper" type="CSGBox3D" parent="Architecture/Basement/Harchoblok"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5000, -5.4500, -26.0000)
+use_collision = true
+size = Vector3(3.0000, 2.1000, 0.2000)
+material = SubResource("StandardMaterial3D_wall_upper")
+
+[node name="Roof" type="Node3D" parent="Architecture"]
+
+[node name="Floor" type="CSGBox3D" parent="Architecture/Roof"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 9)
+use_collision = true
+size = Vector3(4, 0.2, 6)
+material = SubResource("StandardMaterial3D_floor")
+
+[node name="ParapetLeft" type="CSGBox3D" parent="Architecture/Roof"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 4.35, 9)
+use_collision = true
+size = Vector3(0.2, 0.9, 6)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="ParapetRight" type="CSGBox3D" parent="Architecture/Roof"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 4.35, 9)
+use_collision = true
+size = Vector3(0.2, 0.9, 6)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="ParapetFar" type="CSGBox3D" parent="Architecture/Roof"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.35, 12)
+use_collision = true
+size = Vector3(4, 0.9, 0.2)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="AccessHutDado" type="CSGBox3D" parent="Architecture/Roof"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.55, 6.6)
+use_collision = true
+size = Vector3(4, 1.3, 0.2)
+material = SubResource("StandardMaterial3D_wall_dado")
+
+[node name="Furniture" type="Node3D" parent="."]
+
+[node name="NursingDesk" parent="Furniture" instance=ExtResource("6_desk")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 5.6, 0, -3)
+
+[node name="NursingChair" parent="Furniture" instance=ExtResource("7_chair")]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, 4.6, 0, -3)
+
+[node name="NursingBookcase" parent="Furniture" instance=ExtResource("8_bookcase")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 5.7, 0, -4.2)
+
+[node name="NursingTrash" parent="Furniture" instance=ExtResource("9_trash")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 0, -1.8)
+
+[node name="NursingLamp" parent="Furniture" instance=ExtResource("10_lamp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.78, 0.384, -2.85)
+
+[node name="NursingBooks" parent="Furniture" instance=ExtResource("11_books")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 0.384, -2.4)
+
+[node name="NursingPhone" parent="Furniture" instance=ExtResource("12_phone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.78, 0.384, -2.6)
+
+[node name="BedA" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.9, 0, -7.1)
+
+[node name="CabinetA" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.1, 0, -8.9)
+
+[node name="BedB" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.9, 0, -13.9)
+
+[node name="CabinetB" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1, 0, -12.1)
+
+[node name="OrdDesk" parent="Furniture" instance=ExtResource("6_desk")]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, -3.8, 0, -0.6)
+
+[node name="OrdChair" parent="Furniture" instance=ExtResource("7_chair")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -3.0, 0, -0.6)
+
+[node name="OrdBookcase" parent="Furniture" instance=ExtResource("8_bookcase")]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, -3.8, 0, -1.6)
+
+[node name="SesCabinet" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0, -3.2)
+
+[node name="SesTrash" parent="Furniture" instance=ExtResource("9_trash")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -4.4)
+
+[node name="ManCabinet" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0, -12.8)
+
+[node name="ManShelf" parent="Furniture" instance=ExtResource("8_bookcase")]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, -3.8, 0, -13.8)
+
+[node name="Bed3a" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.9, 0, -10.15)
+
+[node name="Bed3b" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.9, 0, -11.25)
+
+[node name="Bed4a" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.9, 0, -5.45)
+
+[node name="Bed4b" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.9, 0, -6.55)
+
+[node name="Bed5a" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.9, 0, -8.05)
+
+[node name="Bed5b" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.9, 0, -9.15)
+
+[node name="NursingDesk2" parent="Furniture" instance=ExtResource("6_desk")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 5.6, 0, -25.0)
+
+[node name="NursingChair2" parent="Furniture" instance=ExtResource("7_chair")]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, 4.6, 0, -25.0)
+
+[node name="NursingBookcase2" parent="Furniture" instance=ExtResource("8_bookcase")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 5.7, 0, -26.2)
+
+[node name="NursingTrash2" parent="Furniture" instance=ExtResource("9_trash")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 0, -23.8)
+
+[node name="NursingLamp2" parent="Furniture" instance=ExtResource("10_lamp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.78, 0.384, -24.85)
+
+[node name="NursingBooks2" parent="Furniture" instance=ExtResource("11_books")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 0.384, -24.4)
+
+[node name="NursingPhone2" parent="Furniture" instance=ExtResource("12_phone")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.78, 0.384, -24.6)
+
+[node name="OrdDesk2" parent="Furniture" instance=ExtResource("6_desk")]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, -3.8, 0, -22.6)
+
+[node name="OrdChair2" parent="Furniture" instance=ExtResource("7_chair")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -3.0, 0, -22.6)
+
+[node name="OrdBookcase2" parent="Furniture" instance=ExtResource("8_bookcase")]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, -3.8, 0, -23.6)
+
+[node name="SesCabinet2" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0, -25.2)
+
+[node name="SesTrash2" parent="Furniture" instance=ExtResource("9_trash")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -26.4)
+
+[node name="ManCabinet2" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0, -34.8)
+
+[node name="ManShelf2" parent="Furniture" instance=ExtResource("8_bookcase")]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, -3.8, 0, -35.8)
+
+[node name="Bed3a2" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.9, 0, -32.15)
+
+[node name="Bed3b2" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.9, 0, -33.25)
+
+[node name="Bed4a2" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.9, 0, -27.45)
+
+[node name="Bed4b2" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.9, 0, -28.55)
+
+[node name="Bed5a2" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.9, 0, -30.05)
+
+[node name="Bed5b2" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.9, 0, -31.15)
+
+[node name="BedA2a" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.9, 0, -29.1)
+
+[node name="CabinetA2a" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.1, 0, -30.9)
+
+[node name="BedB2a" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 4.9, 0, -35.9)
+
+[node name="CabinetB2a" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1, 0, -34.1)
+
+[node name="Lights" type="Node3D" parent="."]
+
+[node name="RoofLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.9, 9)
+light_color = Color(0.6, 0.65, 0.75, 1)
+light_energy = 0.6
+omni_range = 10.0
+
+[node name="BCorridorLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.699999999999999, -23)
+light_color = Color(0.75, 0.8, 0.75, 1)
+light_energy = 1.2
+omni_range = 8
+script = ExtResource("1_flicker")
+
+[node name="MorgLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, -4.699999999999999, -22.0)
+light_color = Color(0.65, 0.75, 0.75, 1)
+light_energy = 0.9
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="SkladLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0, -4.699999999999999, -22.0)
+light_color = Color(0.75, 0.8, 0.75, 1)
+light_energy = 0.9
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="PralnyaLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, -4.699999999999999, -27.5)
+light_color = Color(0.75, 0.8, 0.75, 1)
+light_energy = 0.9
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="HarchoblokLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, -4.699999999999999, -27.5)
+light_color = Color(0.75, 0.8, 0.75, 1)
+light_energy = 0.9
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+
+[node name="MorgCabinet" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, -7.8, -21.0)
+
+[node name="MorgTrash" parent="Furniture" instance=ExtResource("9_trash")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, -7.8, -23.0)
+
+[node name="SkladCabinet1" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, -7.8, -21.0)
+
+[node name="SkladCabinet2" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, -7.8, -23.0)
+
+[node name="PralnyaCabinet" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3, -7.8, -27.5)
+
+[node name="HarchoblokCabinet" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, -7.8, -27.5)
+
+[node name="F1PriymalneLight1" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, -0.7999999999999998, -5)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 6
+script = ExtResource("1_flicker")
+
+[node name="F1PriymalneLight2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, -0.7999999999999998, -11)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 6
+script = ExtResource("1_flicker")
+
+[node name="F1SanpropLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, -0.7999999999999998, -4.0)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="F1GolovLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, -0.7999999999999998, -25.0)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="F1RentgenLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4, -0.7999999999999998, -31.0)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="F1ReyestrLight1" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, -0.7999999999999998, -25)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 6
+script = ExtResource("1_flicker")
+
+[node name="F1ReyestrLight2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, -0.7999999999999998, -34)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 6
+script = ExtResource("1_flicker")
+
+
+[node name="TriageDesk" parent="Furniture" instance=ExtResource("6_desk")]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, -4.9, -3.9, -4.0)
+
+[node name="TriageChair" parent="Furniture" instance=ExtResource("7_chair")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -4.0, -3.9, -4.0)
+
+[node name="WaitChair1" parent="Furniture" instance=ExtResource("7_chair")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -4.9, -3.9, -10.0)
+
+[node name="WaitChair2" parent="Furniture" instance=ExtResource("7_chair")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -4.9, -3.9, -11.0)
+
+[node name="WaitChair3" parent="Furniture" instance=ExtResource("7_chair")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -4.9, -3.9, -12.0)
+
+[node name="SanpropCabinet" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, -3.9, -3.0)
+
+[node name="GolovDesk" parent="Furniture" instance=ExtResource("6_desk")]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, -3.8, -3.9, -24.5)
+
+[node name="GolovChair" parent="Furniture" instance=ExtResource("7_chair")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -3.0, -3.9, -24.5)
+
+[node name="GolovShelf" parent="Furniture" instance=ExtResource("8_bookcase")]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, -3.8, -3.9, -25.8)
+
+[node name="RentgenCabinet" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, -3.9, -30.5)
+
+[node name="ReyestrDesk" parent="Furniture" instance=ExtResource("6_desk")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 5.6, -3.9, -25.0)
+
+[node name="ReyestrChair" parent="Furniture" instance=ExtResource("7_chair")]
+transform = Transform3D(4.371139e-08, 0, 1, 0, 1, 0, -1, 0, 4.371139e-08, 4.6, -3.9, -25.0)
+
+[node name="ReyestrShelf" parent="Furniture" instance=ExtResource("8_bookcase")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 5.6, -3.9, -34.0)
+
+[node name="F3CorridorLightA1" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.0, -4)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 6
+script = ExtResource("1_flicker")
+
+[node name="F3CorridorLightA2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.0, -12)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 6
+script = ExtResource("1_flicker")
+
+[node name="F3SurgLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, 7.0, -8.0)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="F3PerevLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 7.0, -7.0)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="F3CorridorLightB1" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.0, -26)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 6
+script = ExtResource("1_flicker")
+
+[node name="F3CorridorLightB2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.0, -34)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 6
+script = ExtResource("1_flicker")
+
+[node name="F3ReanLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, 7.0, -28.0)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="F3PeredopLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4, 7.0, -25.0)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="F3OperLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 7.0, -30.0)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.5
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="F3SterylLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.25, 7.0, -34.5)
+light_color = Color(0.82, 0.88, 0.78, 1)
+light_energy = 1.1
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+
+[node name="SurgBed1" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.9, 3.9, -5.9)
+
+[node name="SurgBed2" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.9, 3.9, -8.0)
+
+[node name="SurgBed3" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.9, 3.9, -10.1)
+
+[node name="PerevCabinet" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 3.9, -4.2)
+
+[node name="PerevTrash" parent="Furniture" instance=ExtResource("9_trash")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 3.9, -9.5)
+
+[node name="ReanBed1" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.9, 3.9, -25.9)
+
+[node name="ReanBed2" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.9, 3.9, -28.0)
+
+[node name="ReanBed3" parent="Furniture" instance=ExtResource("4_bed")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.9, 3.9, -30.1)
+
+[node name="PeredopCabinet" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 3.9, -25.0)
+
+[node name="OperTable" parent="Furniture" instance=ExtResource("6_desk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 3.9, -30.0)
+
+[node name="SterylCabinet" parent="Furniture" instance=ExtResource("5_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 3.9, -34.5)
+
+
+[node name="ElevatorLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 3.1, -18.5)
+light_color = Color(0.9, 0.85, 0.6, 1)
+light_energy = 1.0
+omni_range = 3.0
+
+
+[node name="FlickerLight1" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, -1.5)
+light_color = Color(0.8, 0.9, 0.75, 1)
+light_energy = 2.0
+omni_range = 8.0
+script = ExtResource("1_flicker")
+
+[node name="FlickerLight2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, -8)
+light_color = Color(0.75, 0.85, 0.72, 1)
+light_energy = 1.6
+omni_range = 8.0
+script = ExtResource("1_flicker")
+
+[node name="FlickerLight3" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, -14.5)
+light_color = Color(0.8, 0.9, 0.75, 1)
+light_energy = 1.8
+omni_range = 8.0
+script = ExtResource("1_flicker")
+
+[node name="NursingLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 3.1, -3)
+light_color = Color(0.85, 0.9, 0.8, 1)
+light_energy = 1.4
+omni_range = 5.0
+script = ExtResource("1_flicker")
+
+[node name="OrdLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 3.1, -1.1)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 1.2
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="SesLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 3.1, -3.7)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 1.2
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="ManLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 3.1, -13.3)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 1.2
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="Ward3Light" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, 3.1, -10.7)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 1.2
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="Ward4Light" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, 3.1, -6.0)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 1.2
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="Ward5Light" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, 3.1, -8.6)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 1.2
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="SanLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0, 3.1, -10.85)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 0.8
+omni_range = 3.0
+script = ExtResource("1_flicker")
+
+[node name="DeskLampLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.78, 0.65, -2.85)
+light_color = Color(0.95, 0.75, 0.45, 1)
+light_energy = 1.1
+omni_range = 2.2
+
+[node name="FlickerLight1_2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, -23.5)
+light_color = Color(0.8, 0.9, 0.75, 1)
+light_energy = 2.0
+omni_range = 8.0
+script = ExtResource("1_flicker")
+
+[node name="FlickerLight2_2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, -30.0)
+light_color = Color(0.75, 0.85, 0.72, 1)
+light_energy = 1.6
+omni_range = 8.0
+script = ExtResource("1_flicker")
+
+[node name="FlickerLight3_2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, -36.5)
+light_color = Color(0.8, 0.9, 0.75, 1)
+light_energy = 1.8
+omni_range = 8.0
+script = ExtResource("1_flicker")
+
+[node name="NursingLight2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 3.1, -25.0)
+light_color = Color(0.85, 0.9, 0.8, 1)
+light_energy = 1.4
+omni_range = 5.0
+script = ExtResource("1_flicker")
+
+[node name="OrdLight2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 3.1, -23.1)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 1.2
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="SesLight2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 3.1, -25.7)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 1.2
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="ManLight2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 3.1, -35.3)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 1.2
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="Ward3Light2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, 3.1, -32.7)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 1.2
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="Ward4Light2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, 3.1, -28.0)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 1.2
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="Ward5Light2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, 3.1, -30.6)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 1.2
+omni_range = 4.0
+script = ExtResource("1_flicker")
+
+[node name="SanLight2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0, 3.1, -32.85)
+light_color = Color(0.8, 0.88, 0.75, 1)
+light_energy = 0.8
+omni_range = 3.0
+script = ExtResource("1_flicker")
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5)
+
+[node name="VHSOverlay" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="VHSOverlay"]
+material = SubResource("ShaderMaterial_vhs")
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
