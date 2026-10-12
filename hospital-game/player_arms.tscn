@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://player_arms.gd" id="1_arms"]
+[ext_resource type="PackedScene" path="res://assets/arms_test/fps_arms_rig_test.fbx" id="2_model"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_coat"]
 albedo_color = Color(0.88, 0.87, 0.82, 1)
@@ -8,13 +9,6 @@ roughness = 0.8
 emission_enabled = true
 emission = Color(0.3, 0.3, 0.28, 1)
 emission_energy_multiplier = 0.25
-
-[sub_resource type="StandardMaterial3D" id="Mat_skin"]
-albedo_color = Color(0.8, 0.6, 0.5, 1)
-roughness = 0.6
-emission_enabled = true
-emission = Color(0.45, 0.28, 0.22, 1)
-emission_energy_multiplier = 0.35
 
 [sub_resource type="StandardMaterial3D" id="Mat_cig_paper"]
 albedo_color = Color(0.92, 0.91, 0.87, 1)
@@ -27,8 +21,8 @@ emission_energy_multiplier = 0.3
 albedo_color = Color(0.9, 0.35, 0.1, 1)
 roughness = 1.0
 emission_enabled = true
-emission = Color(1.0, 0.4, 0.1, 1)
-emission_energy_multiplier = 1.8
+emission = Color(1.0, 0.45, 0.1, 1)
+emission_energy_multiplier = 4.0
 
 [sub_resource type="ParticleProcessMaterial" id="SmokeProcess"]
 direction = Vector3(0, 1, 0)
@@ -47,46 +41,53 @@ height = 0.04
 [node name="Arms" type="Node3D"]
 script = ExtResource("1_arms")
 
-[node name="LeftForearm" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24, -0.34, -0.55)
-size = Vector3(0.11, 0.11, 0.46)
+[node name="Model" parent="." instance=ExtResource("2_model")]
+transform = Transform3D(-0.15, 0, 0, 0, 0.15, 0, 0, 0, -0.15, -0.11, -0.07, -0.02)
+
+[node name="SleeveR" type="BoneAttachment3D" parent="Model/caucasian_male_1/Skeleton3D"]
+bone_name = "forearm.R"
+bone_idx = 3
+
+[node name="SleeveCylR" type="CSGCylinder3D" parent="Model/caucasian_male_1/Skeleton3D/SleeveR"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.4)
+radius = 0.75
+height = 1.6
 material = SubResource("Mat_coat")
 
-[node name="LeftHand" type="CSGSphere3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24, -0.3, -0.33)
-radius = 0.022
-material = SubResource("Mat_skin")
+[node name="SleeveL" type="BoneAttachment3D" parent="Model/caucasian_male_1/Skeleton3D"]
+bone_name = "forearm.L"
+bone_idx = 8
 
-[node name="RightForearm" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24, -0.34, -0.55)
-size = Vector3(0.11, 0.11, 0.46)
+[node name="SleeveCylL" type="CSGCylinder3D" parent="Model/caucasian_male_1/Skeleton3D/SleeveL"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.4)
+radius = 0.75
+height = 1.6
 material = SubResource("Mat_coat")
 
-[node name="RightHandGroup" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, -0.3, -0.33)
+[node name="CigaretteAttach" type="BoneAttachment3D" parent="Model/caucasian_male_1/Skeleton3D"]
+bone_name = "hand.R"
+bone_idx = 11
 
-[node name="RightHand" type="CSGSphere3D" parent="RightHandGroup"]
-radius = 0.022
-material = SubResource("Mat_skin")
-
-[node name="Paper" type="CSGCylinder3D" parent="RightHandGroup"]
-transform = Transform3D(0.98, 0.2, 0, -0.2, 0.98, 0, 0, 0, 1, 0, 0.02, -0.02)
-radius = 0.007
-height = 0.09
+[node name="Paper" type="CSGCylinder3D" parent="Model/caucasian_male_1/Skeleton3D/CigaretteAttach"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5)
+radius = 0.05
+height = 0.6
 material = SubResource("Mat_cig_paper")
 
-[node name="Ember" type="CSGSphere3D" parent="RightHandGroup"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.01, 0.065, -0.02)
-radius = 0.009
+[node name="Ember" type="CSGSphere3D" parent="Model/caucasian_male_1/Skeleton3D/CigaretteAttach"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, -0.5)
+radius = 0.09
 material_override = SubResource("Mat_ember")
 
-[node name="SmokeParticles" type="GPUParticles3D" parent="RightHandGroup"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.01, 0.07, -0.02)
+[node name="SmokeParticles" type="GPUParticles3D" parent="Model/caucasian_male_1/Skeleton3D/CigaretteAttach"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.33, -0.5)
 emitting = false
 amount = 12
 lifetime = 1.4
 one_shot = true
 explosiveness = 0.3
-visibility_aabb = AABB(-0.3, -0.1, -0.3, 0.6, 0.8, 0.6)
+visibility_aabb = AABB(-2, -1, -2, 4, 5, 4)
 process_material = SubResource("SmokeProcess")
 draw_pass_1 = SubResource("SmokeMesh")
+
+[editable path="Model"]
