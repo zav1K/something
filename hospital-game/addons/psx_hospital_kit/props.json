@@ -1,0 +1,981 @@
+{
+ "atlas": 1024,
+ "atlas_used": 192,
+ "fps": 30,
+ "props": [
+  {
+   "name": "floor_lino",
+   "title": "Lino Floor",
+   "group": "floors",
+   "place": "floor",
+   "note": "2 x 2 m",
+   "tris": 8,
+   "size": [
+    2.0,
+    2.0,
+    0.0
+   ],
+   "min": [
+    -1.0,
+    -1.0,
+    0.0
+   ],
+   "max": [
+    1.0,
+    1.0,
+    0.0
+   ],
+   "parts": [
+    {
+     "name": "floor_lino",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 8,
+     "min": [
+      -1.0,
+      -1.0,
+      0.0
+     ],
+     "max": [
+      1.0,
+      1.0,
+      0.0
+     ]
+    }
+   ],
+   "anims": []
+  },
+  {
+   "name": "ceiling_tiles",
+   "title": "Ceiling Tiles",
+   "group": "ceilings",
+   "place": "floor",
+   "note": "hangs at 3 m",
+   "tris": 8,
+   "size": [
+    2.0,
+    2.0,
+    0.0
+   ],
+   "min": [
+    -1.0,
+    -1.0,
+    3.0
+   ],
+   "max": [
+    1.0,
+    1.0,
+    3.0
+   ],
+   "parts": [
+    {
+     "name": "ceiling_tiles",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 8,
+     "min": [
+      -1.0,
+      -1.0,
+      3.0
+     ],
+     "max": [
+      1.0,
+      1.0,
+      3.0
+     ]
+    }
+   ],
+   "anims": []
+  },
+  {
+   "name": "wall",
+   "title": "Wall",
+   "group": "walls",
+   "place": "floor",
+   "note": "tiled to 1 m, painted above",
+   "tris": 28,
+   "size": [
+    2.0,
+    0.2,
+    3.0
+   ],
+   "min": [
+    -1.0,
+    -0.1,
+    0.0
+   ],
+   "max": [
+    1.0,
+    0.1,
+    3.0
+   ],
+   "parts": [
+    {
+     "name": "wall",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 28,
+     "min": [
+      -1.0,
+      -0.1,
+      0.0
+     ],
+     "max": [
+      1.0,
+      0.1,
+      3.0
+     ]
+    }
+   ],
+   "anims": []
+  },
+  {
+   "name": "wall_stained",
+   "title": "Stained Wall",
+   "group": "walls",
+   "place": "floor",
+   "note": "bloodied on its front only",
+   "tris": 28,
+   "size": [
+    2.0,
+    0.2,
+    3.0
+   ],
+   "min": [
+    -1.0,
+    -0.1,
+    0.0
+   ],
+   "max": [
+    1.0,
+    0.1,
+    3.0
+   ],
+   "parts": [
+    {
+     "name": "wall_stained",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 28,
+     "min": [
+      -1.0,
+      -0.1,
+      0.0
+     ],
+     "max": [
+      1.0,
+      0.1,
+      3.0
+     ]
+    }
+   ],
+   "anims": []
+  },
+  {
+   "name": "wall_doorway",
+   "title": "Doorway",
+   "group": "walls",
+   "place": "floor",
+   "note": "fits the doors",
+   "tris": 56,
+   "size": [
+    2.0,
+    0.2,
+    3.0
+   ],
+   "min": [
+    -1.0,
+    -0.1,
+    0.0
+   ],
+   "max": [
+    1.0,
+    0.1,
+    3.0
+   ],
+   "parts": [
+    {
+     "name": "wall_doorway",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 20,
+     "min": [
+      -1.0,
+      -0.1,
+      0.0
+     ],
+     "max": [
+      -0.5,
+      0.1,
+      3.0
+     ]
+    },
+    {
+     "name": "wall_doorway_1",
+     "parent": "wall_doorway",
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 16,
+     "min": [
+      -0.5,
+      -0.1,
+      2.2
+     ],
+     "max": [
+      0.5,
+      0.1,
+      3.0
+     ]
+    },
+    {
+     "name": "wall_doorway_2",
+     "parent": "wall_doorway",
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 20,
+     "min": [
+      0.5,
+      -0.1,
+      0.0
+     ],
+     "max": [
+      1.0,
+      0.1,
+      3.0
+     ]
+    }
+   ],
+   "anims": []
+  },
+  {
+   "name": "wall_window",
+   "title": "Window Wall",
+   "group": "walls",
+   "place": "floor",
+   "note": "wire glass, looking into a room",
+   "tris": 128,
+   "size": [
+    2.0,
+    0.24,
+    3.0
+   ],
+   "min": [
+    -1.0,
+    -0.12,
+    0.0
+   ],
+   "max": [
+    1.0,
+    0.12,
+    3.0
+   ],
+   "parts": [
+    {
+     "name": "wall_window",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 18,
+     "min": [
+      -1.0,
+      -0.1,
+      0.0
+     ],
+     "max": [
+      -0.6,
+      0.1,
+      3.0
+     ]
+    },
+    {
+     "name": "wall_window_1",
+     "parent": "wall_window",
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 12,
+     "min": [
+      -0.6,
+      -0.1,
+      0.0
+     ],
+     "max": [
+      0.6,
+      0.1,
+      1.0
+     ]
+    },
+    {
+     "name": "wall_window_2",
+     "parent": "wall_window",
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 16,
+     "min": [
+      -0.6,
+      -0.1,
+      2.1
+     ],
+     "max": [
+      0.6,
+      0.1,
+      3.0
+     ]
+    },
+    {
+     "name": "wall_window_3",
+     "parent": "wall_window",
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 18,
+     "min": [
+      0.6,
+      -0.1,
+      0.0
+     ],
+     "max": [
+      1.0,
+      0.1,
+      3.0
+     ]
+    },
+    {
+     "name": "wall_window_4",
+     "parent": "wall_window",
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 64,
+     "min": [
+      -0.65,
+      -0.12,
+      0.995
+     ],
+     "max": [
+      0.65,
+      0.12,
+      2.105
+     ]
+    }
+   ],
+   "anims": []
+  },
+  {
+   "name": "wall_post",
+   "title": "Wall Post",
+   "group": "walls",
+   "place": "floor",
+   "note": "fills the corner where walls meet",
+   "tris": 26,
+   "size": [
+    0.2,
+    0.2,
+    3.0
+   ],
+   "min": [
+    -0.1,
+    -0.1,
+    0.0
+   ],
+   "max": [
+    0.1,
+    0.1,
+    3.0
+   ],
+   "parts": [
+    {
+     "name": "wall_post",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 26,
+     "min": [
+      -0.1,
+      -0.1,
+      0.0
+     ],
+     "max": [
+      0.1,
+      0.1,
+      3.0
+     ]
+    }
+   ],
+   "anims": []
+  },
+  {
+   "name": "door",
+   "title": "Door",
+   "group": "doors",
+   "place": "floor",
+   "note": "a room door; sits in a doorway, swings open",
+   "tris": 96,
+   "size": [
+    1.14,
+    0.24,
+    2.27
+   ],
+   "min": [
+    -0.57,
+    -0.12,
+    0.0
+   ],
+   "max": [
+    0.57,
+    0.12,
+    2.27
+   ],
+   "parts": [
+    {
+     "name": "door",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 12,
+     "min": [
+      -0.57,
+      -0.12,
+      0.0
+     ],
+     "max": [
+      -0.49,
+      0.12,
+      2.27
+     ]
+    },
+    {
+     "name": "door_casing_r",
+     "parent": "door",
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 12,
+     "min": [
+      0.49,
+      -0.12,
+      0.0
+     ],
+     "max": [
+      0.57,
+      0.12,
+      2.27
+     ]
+    },
+    {
+     "name": "door_casing_top",
+     "parent": "door",
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 12,
+     "min": [
+      -0.51,
+      -0.12,
+      2.19
+     ],
+     "max": [
+      0.51,
+      0.12,
+      2.26
+     ]
+    },
+    {
+     "name": "door_leaf",
+     "parent": "door",
+     "pivot": [
+      -0.48,
+      0.0,
+      0.0
+     ],
+     "tris": 60,
+     "min": [
+      -0.48,
+      -0.0675,
+      0.01
+     ],
+     "max": [
+      0.48,
+      0.0675,
+      2.19
+     ]
+    }
+   ],
+   "anims": [
+    {
+     "name": "open",
+     "seconds": 2.4,
+     "loop": false
+    }
+   ]
+  },
+  {
+   "name": "hospital_bed",
+   "title": "Hospital Bed",
+   "group": "ward",
+   "place": "floor",
+   "note": "the back rises",
+   "tris": 456,
+   "size": [
+    0.963,
+    2.059,
+    1.03
+   ],
+   "min": [
+    -0.482,
+    -1.034,
+    0.0
+   ],
+   "max": [
+    0.481,
+    1.025,
+    1.03
+   ],
+   "parts": [
+    {
+     "name": "hospital_bed",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 432,
+     "min": [
+      -0.482,
+      -1.034,
+      0.0
+     ],
+     "max": [
+      0.4814,
+      1.025,
+      1.03
+     ]
+    },
+    {
+     "name": "hospital_bed_back",
+     "parent": "hospital_bed",
+     "pivot": [
+      0.0,
+      0.3,
+      0.53
+     ],
+     "tris": 24,
+     "min": [
+      -0.43,
+      0.3,
+      0.46
+     ],
+     "max": [
+      0.43,
+      0.98,
+      0.7
+     ]
+    }
+   ],
+   "anims": [
+    {
+     "name": "raise",
+     "seconds": 3.0,
+     "loop": false
+    }
+   ]
+  },
+  {
+   "name": "wheelchair",
+   "title": "Wheelchair",
+   "group": "ward",
+   "place": "floor",
+   "note": "its wheels turn",
+   "tris": 784,
+   "size": [
+    0.694,
+    0.794,
+    1.014
+   ],
+   "min": [
+    -0.347,
+    -0.41,
+    -0.002
+   ],
+   "max": [
+    0.347,
+    0.384,
+    1.012
+   ],
+   "parts": [
+    {
+     "name": "wheelchair",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 280,
+     "min": [
+      -0.245,
+      -0.41,
+      0.0
+     ],
+     "max": [
+      0.245,
+      0.36,
+      1.012
+     ]
+    },
+    {
+     "name": "wheelchair_wheel_l",
+     "parent": "wheelchair",
+     "pivot": [
+      -0.3,
+      0.08,
+      0.31
+     ],
+     "tris": 252,
+     "min": [
+      -0.3469,
+      -0.2242,
+      -0.002
+     ],
+     "max": [
+      -0.27,
+      0.3842,
+      0.622
+     ]
+    },
+    {
+     "name": "wheelchair_wheel_r",
+     "parent": "wheelchair",
+     "pivot": [
+      0.3,
+      0.08,
+      0.31
+     ],
+     "tris": 252,
+     "min": [
+      0.27,
+      -0.2242,
+      -0.002
+     ],
+     "max": [
+      0.3469,
+      0.3842,
+      0.622
+     ]
+    }
+   ],
+   "anims": [
+    {
+     "name": "roll",
+     "seconds": 2.0,
+     "loop": true
+    }
+   ]
+  },
+  {
+   "name": "iv_stand",
+   "title": "IV Stand",
+   "group": "ward",
+   "place": "floor",
+   "note": "a drip bag hanging",
+   "tris": 368,
+   "size": [
+    0.563,
+    0.567,
+    1.956
+   ],
+   "min": [
+    -0.281,
+    -0.257,
+    0.0
+   ],
+   "max": [
+    0.281,
+    0.31,
+    1.956
+   ],
+   "parts": [
+    {
+     "name": "iv_stand",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 368,
+     "min": [
+      -0.2813,
+      -0.2565,
+      0.0
+     ],
+     "max": [
+      0.2813,
+      0.31,
+      1.9559
+     ]
+    }
+   ],
+   "anims": []
+  },
+  {
+   "name": "bedside_cabinet",
+   "title": "Bedside Cabinet",
+   "group": "ward",
+   "place": "floor",
+   "note": "the drawer opens",
+   "tris": 232,
+   "size": [
+    0.47,
+    0.47,
+    1.115
+   ],
+   "min": [
+    -0.235,
+    -0.235,
+    0.0
+   ],
+   "max": [
+    0.235,
+    0.235,
+    1.115
+   ],
+   "parts": [
+    {
+     "name": "bedside_cabinet",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 160,
+     "min": [
+      -0.235,
+      -0.235,
+      0.0
+     ],
+     "max": [
+      0.235,
+      0.235,
+      1.115
+     ]
+    },
+    {
+     "name": "bedside_cabinet_drawer",
+     "parent": "bedside_cabinet",
+     "pivot": [
+      0.0,
+      -0.22,
+      0.62
+     ],
+     "tris": 72,
+     "min": [
+      -0.215,
+      -0.23,
+      0.62
+     ],
+     "max": [
+      0.215,
+      0.21,
+      0.8
+     ]
+    }
+   ],
+   "anims": [
+    {
+     "name": "open",
+     "seconds": 1.2,
+     "loop": false
+    }
+   ]
+  },
+  {
+   "name": "ceiling_light",
+   "title": "Ceiling Light",
+   "group": "lights",
+   "place": "floor",
+   "note": "a fluorescent panel",
+   "tris": 12,
+   "size": [
+    1.22,
+    0.62,
+    0.08
+   ],
+   "min": [
+    -0.61,
+    -0.31,
+    2.92
+   ],
+   "max": [
+    0.61,
+    0.31,
+    3.0
+   ],
+   "parts": [
+    {
+     "name": "ceiling_light",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 12,
+     "min": [
+      -0.61,
+      -0.31,
+      2.92
+     ],
+     "max": [
+      0.61,
+      0.31,
+      3.0
+     ]
+    }
+   ],
+   "anims": []
+  },
+  {
+   "name": "exit_sign",
+   "title": "Exit Sign",
+   "group": "signs",
+   "place": "floor",
+   "note": "hangs from the ceiling",
+   "tris": 36,
+   "size": [
+    0.4,
+    0.06,
+    0.46
+   ],
+   "min": [
+    -0.2,
+    -0.03,
+    2.54
+   ],
+   "max": [
+    0.2,
+    0.03,
+    3.0
+   ],
+   "parts": [
+    {
+     "name": "exit_sign",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 36,
+     "min": [
+      -0.2,
+      -0.03,
+      2.54
+     ],
+     "max": [
+      0.2,
+      0.03,
+      3.0
+     ]
+    }
+   ],
+   "anims": []
+  },
+  {
+   "name": "blood_pool",
+   "title": "Blood Pool",
+   "group": "mess",
+   "place": "floor",
+   "note": "and a trail",
+   "tris": 60,
+   "size": [
+    1.152,
+    2.263,
+    0.0
+   ],
+   "min": [
+    -0.539,
+    -1.737,
+    0.003
+   ],
+   "max": [
+    0.614,
+    0.526,
+    0.003
+   ],
+   "parts": [
+    {
+     "name": "blood_pool",
+     "parent": null,
+     "pivot": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "tris": 60,
+     "min": [
+      -0.5387,
+      -1.737,
+      0.003
+     ],
+     "max": [
+      0.6135,
+      0.5261,
+      0.003
+     ]
+    }
+   ],
+   "anims": []
+  }
+ ]
+}

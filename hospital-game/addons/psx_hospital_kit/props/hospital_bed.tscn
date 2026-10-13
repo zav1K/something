@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://addons/psx_hospital_kit/models/hospital_bed_model.glb" id="1"]
+
+[sub_resource type="BoxShape3D" id="box0"]
+size = Vector3(0.9634, 1.0300, 2.0590)
+
+[sub_resource type="BoxShape3D" id="box1"]
+size = Vector3(0.8600, 0.2400, 0.6800)
+
+[node name="hospital_bed" instance=ExtResource("1")]
+
+[node name="Collision" type="StaticBody3D" parent="hospital_bed"]
+
+[node name="Box" type="CollisionShape3D" parent="hospital_bed/Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0003, 0.5150, 0.0045)
+shape = SubResource("box0")
+
+[node name="Collision" type="StaticBody3D" parent="hospital_bed/hospital_bed_back"]
+
+[node name="Box" type="CollisionShape3D" parent="hospital_bed/hospital_bed_back/Collision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0500, -0.3400)
+shape = SubResource("box1")
