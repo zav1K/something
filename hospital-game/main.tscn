@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3]
+[gd_scene load_steps=35 format=3]
 
 [ext_resource type="Script" path="res://flicker_light.gd" id="1_flicker"]
 [ext_resource type="Shader" path="res://vhs.gdshader" id="2_vhs"]
@@ -12,6 +12,21 @@
 [ext_resource type="PackedScene" path="res://assets/furniture/books.glb" id="11_books"]
 [ext_resource type="PackedScene" path="res://phone.tscn" id="12_phone"]
 [ext_resource type="PackedScene" path="res://assets/furniture/trashcan.glb" id="9_trash"]
+[ext_resource type="PackedScene" path="res://addons/psx_hospital_kit/props/bedside_cabinet.tscn" id="20_bedside"]
+[ext_resource type="PackedScene" path="res://addons/psx_hospital_kit/props/iv_stand.tscn" id="21_ivstand"]
+[ext_resource type="PackedScene" path="res://addons/psx_hospital_kit/props/wheelchair.tscn" id="22_wheelchair"]
+[ext_resource type="PackedScene" path="res://addons/psx_hospital_kit/props/blood_pool.tscn" id="23_bloodpool"]
+[ext_resource type="PackedScene" path="res://assets/haunted_hospital/misc/IV_Stand.fbx" id="24_hhivstand"]
+[ext_resource type="PackedScene" path="res://assets/haunted_hospital/furniture/Nightstand.fbx" id="25_nightstand"]
+[ext_resource type="PackedScene" path="res://assets/haunted_hospital/misc/Bucket.fbx" id="26_bucket"]
+[ext_resource type="PackedScene" path="res://assets/haunted_hospital/misc/WheelChair.fbx" id="27_hhwheelchair"]
+[ext_resource type="PackedScene" path="res://assets/haunted_hospital/furniture/StorageRack.fbx" id="28_storagerack"]
+[ext_resource type="PackedScene" path="res://assets/haunted_hospital/furniture/Screen.fbx" id="29_screen"]
+[ext_resource type="PackedScene" path="res://assets/haunted_hospital/decals/Decal_Dirt_01.fbx" id="30_dirtdecal"]
+[ext_resource type="PackedScene" path="res://assets/psx_med_pack/Med_1.glb" id="31_med1"]
+[ext_resource type="PackedScene" path="res://assets/psx_med_pack/Med_7.glb" id="32_med7"]
+[ext_resource type="PackedScene" path="res://assets/psx_med_pack/Med_16.glb" id="33_med16"]
+[ext_resource type="PackedScene" path="res://assets/psx_med_pack/Med_12.glb" id="34_med12"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
 albedo_color = Color(0.36, 0.37, 0.34, 1)
@@ -3015,6 +3030,87 @@ size = Vector3(4, 1.3, 0.2)
 material = SubResource("StandardMaterial3D_wall_dado")
 
 [node name="Furniture" type="Node3D" parent="."]
+
+[node name="SesBedsideCabinet" parent="Furniture" instance=ExtResource("20_bedside")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 0, -3.0)
+
+[node name="SesMedPack" parent="Furniture" instance=ExtResource("31_med1")]
+transform = Transform3D(0.02, 0, 0, 0, 0.02, 0, 0, 0, 0.02, -2.3, 1.0, -3.0)
+
+[node name="ManIVStand" parent="Furniture" instance=ExtResource("21_ivstand")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0, -13.8)
+
+[node name="Ward3Wheelchair" parent="Furniture" instance=ExtResource("22_wheelchair")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2.2, 0, -10.0)
+
+[node name="Ward4IVStand" parent="Furniture" instance=ExtResource("24_hhivstand")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0, -5.3)
+
+[node name="Ward5Nightstand" parent="Furniture" instance=ExtResource("25_nightstand")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0, -7.9)
+
+[node name="Ward5MedPack" parent="Furniture" instance=ExtResource("32_med7")]
+transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 2.2, 0.85, -7.9)
+
+[node name="SanBucket" parent="Furniture" instance=ExtResource("26_bucket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0, -11.3)
+
+[node name="SesBedsideCabinet2" parent="Furniture" instance=ExtResource("20_bedside")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 0, -25.6)
+
+[node name="ManIVStand2" parent="Furniture" instance=ExtResource("21_ivstand")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0, -35.8)
+
+[node name="Ward3Wheelchair2" parent="Furniture" instance=ExtResource("22_wheelchair")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2.2, 0, -32.0)
+
+[node name="SanBucket2" parent="Furniture" instance=ExtResource("26_bucket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0, -33.3)
+
+[node name="GolovMedPack" parent="Furniture" instance=ExtResource("34_med12")]
+transform = Transform3D(0.008, 0, 0, 0, 0.008, 0, 0, 0, 0.008, -2.3, -3.4, -24.5)
+
+[node name="PriymalneWheelchair" parent="Furniture" instance=ExtResource("27_hhwheelchair")]
+transform = Transform3D(0.22, 0, 0, 0, 0.22, 0, 0, 0, 0.22, -2.0, -3.9, -3.0)
+
+[node name="SurgIVStand1" parent="Furniture" instance=ExtResource("21_ivstand")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 3.9, -6.5)
+
+[node name="SurgIVStand2" parent="Furniture" instance=ExtResource("21_ivstand")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 3.9, -9.5)
+
+[node name="PerevMedPack" parent="Furniture" instance=ExtResource("33_med16")]
+transform = Transform3D(0.005, 0, 0, 0, 0.005, 0, 0, 0, 0.005, 3.8, 4.4, -4.0)
+
+[node name="ReanIVStand1" parent="Furniture" instance=ExtResource("21_ivstand")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 3.9, -26.5)
+
+[node name="ReanIVStand2" parent="Furniture" instance=ExtResource("21_ivstand")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 3.9, -29.5)
+
+[node name="OperScreen" parent="Furniture" instance=ExtResource("29_screen")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 3.9, -28.5)
+
+[node name="OperBloodPool" parent="Furniture" instance=ExtResource("23_bloodpool")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 3.91, -30.0)
+
+[node name="SterylRack" parent="Furniture" instance=ExtResource("28_storagerack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 3.9, -35.0)
+
+[node name="MorgBloodPool" parent="Furniture" instance=ExtResource("23_bloodpool")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, -7.79, -22.0)
+
+[node name="MorgBucket" parent="Furniture" instance=ExtResource("26_bucket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, -7.8, -21.0)
+
+[node name="SkladRack" parent="Furniture" instance=ExtResource("28_storagerack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, -7.8, -21.5)
+
+[node name="PralnyaBucket" parent="Furniture" instance=ExtResource("26_bucket")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, -7.8, -27.0)
+
+[node name="HarchoblokDirtDecal" parent="Furniture" instance=ExtResource("30_dirtdecal")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 3.5, -7.79, -27.5)
 
 [node name="NursingDesk" parent="Furniture" instance=ExtResource("6_desk")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 5.6, 0, -3)
